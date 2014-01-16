@@ -1,7 +1,7 @@
-energyathome
+energy@home
 ============
 
-Energy@Home is a project created to use the CurrentCost CC128 device. CC128 is
+energy@home is a project created to use the CurrentCost CC128 device. CC128 is
 the one with the black boarder around the display. I decided to make my own
 program to learn programming about in Linux. The goal of the project is to
 capture information from CC128 (and possibly other devices) and display it in
@@ -27,7 +27,7 @@ See COPYING for more details about the licensing of this program.
 
 # INSTALL
 
-See INSTALL file to install / run Energy@Home.
+See INSTALL file to install / run energy@home.
 
 # LIMITATIONS
 
