@@ -48,27 +48,27 @@ Apache (tested with 2.2) PHP 5.3
 To install these pre-requisites: Update your repository:
 
     
-    $ sudo apt-get update
+    <pre><code>$ sudo apt-get update</code></pre>
 
 Type in the following commands to install the relevant component requisites:
 
 ## datalogger
 
     
-    $ sudo apt-get install python python-serial python-mysqldb
+    <pre><code>$ sudo apt-get install python python-serial python-mysqldb</code></pre>
 
 ## Database
 
 Try:
 
     
-    $ sudo apt-get install mysql-server
+    <pre><code>$ sudo apt-get install mysql-server</code></pre>
 
 This usually installs the latest version of MySQL according to the
 distribution. If that fails try installing a specific version:
 
     
-    $ sudo apt-get install mysql-server-5.1
+    <pre><code>$ sudo apt-get install mysql-server-5.1</code></pre>
 
 where 5.1 is the version of MySQL server.
 
@@ -80,7 +80,7 @@ Energy@Home.
 ## web
 
     
-    $ sudo apt-get install apache2 php5 php5-mysql
+    <pre><code>$ sudo apt-get install apache2 php5 php5-mysql</code></pre>
 
 # Recommended Tools
 
@@ -93,7 +93,7 @@ but do not close the terminal itself (that includes logging off or shutting
 down the computer).
 
     
-    $ sudo apt-get install screen
+    <pre><code>$ sudo apt-get install screen</code></pre>
 
 ## MySQL Admin
 
@@ -101,7 +101,7 @@ A set of tools to maintain the MySQL database. It can make creating, editing
 and backing up easier.
 
     
-    $ sudo apt-get install mysql-admin
+    <pre><code>$ sudo apt-get install mysql-admin</code></pre>
 
 # Download Energy@Home
 
@@ -111,19 +111,19 @@ and backing up easier.
   2. Find and download the latest version. E.g energyathome_x.x.tar.gz 
   3. Extract the files: 
     
-    $ tar -xvwzf energyathome_x.x.tar.gz
+    <pre><code>$ tar -xvwzf energyathome_x.x.tar.gz</code></pre>
 
   4. Rename the directory from energyathome_x.x to energyathome 
     
-    $ mv energyathome_x.x energyathome
+    <pre><code>$ mv energyathome_x.x energyathome</code></pre>
 
   5. To download the latest version in the repository install mercurial source control software: 
     
-    $ sudo apt-get install mercurial
+    <pre><code>$ sudo apt-get install mercurial</code></pre>
 
   6. Then checkout the latest code: 
     
-    $ hg clone https://geek94@energyathome.googlecode.com/hg/ energyathome
+    <pre><code>$ git clone https://geek94@energyathome.googlecode.com/hg/energyathome</code></pre>
 
 # Install MySQL
 
@@ -134,14 +134,14 @@ and backing up easier.
   5. Grant the energyathome user access to the database. The bare minimum access it needs are SELECT, INSERT. 
   6. Run the install.sql file located in energyathome/install/install.sql. This can be achieve by running the command below where root is the username. A password will be prompted before the script is run: 
     
-    $ mysql -u root -p < energyathome/install/install.sql
+    <pre><code>$ mysql -u root -p < energyathome/install/install.sql</code></pre>
 
 # Install datalogger
 
   1. Copy the datalogger directory to a suitable location. For purpose of the following instructions it will use ~/datalogger 
   2. Change directory to the datalogger: 
     
-    $ cd ~/energyathome/datalogger
+    <pre><code>$ cd ~/energyathome/datalogger</code></pre>
 
   3. Edit energyathome.ini to match your database setup. There are comments in the file to enter specfic values between the quotes (") e.g username, password, etc. There are also other options but the defaults should work "out of the box". 
 
@@ -151,7 +151,7 @@ I'm sure there is a command line way to find out which port the CurrentCost
 device is connected to but I used installed and used gtkterm.
 
     
-    $ sudo apt-get install gtkterm
+    <pre><code>$ sudo apt-get install gtkterm</code></pre>
 
 Start gtkterm either from Applications menu > Accessories > Serial port
 terminal or via the terminal. Set the port settings in Configuration > Port
@@ -166,15 +166,15 @@ If you are using GNU screen do the following:
 
   1. Start screen: 
     
-    $ screen
+    <pre><code>$ screen</code></pre>
 
   2. The screen should be at command prompt. If not already, go to the datalogger directory: 
     
-    $ cd ~/energyathome/datalogger
+    <pre><code>$ cd ~/energyathome/datalogger</code></pre>
 
   3. Start the logger: 
     
-    $ python Main
+    <pre><code>$ python Main</code></pre>
 
   4. "Detach" the screen is like minimizing the terminal. Pressing the following keyboard combination: 
     
@@ -185,7 +185,7 @@ If you are using GNU screen do the following:
   5. This should return to the prompt before you typed "screen" in step 1. 
   6. To "re-attach" the terminal i.e you want to view or stop the data logger use the following command: 
     
-    $ screen -r
+    <pre><code>$ screen -r</code></pre>
 
 For more information on screen see the man pages ($ man screen) or help
 (screen -h) or the website
@@ -195,11 +195,11 @@ Without GNU screen:
 
   1. The screen should be at command prompt. If not already, go to the datalogger directory: 
     
-    $ cd ~/energyathome/datalogger
+    <pre><code>$ cd ~/energyathome/datalogger</code></pre>
 
   2. Start the logger: 
     
-    $ python Main
+    <pre><code>$ python Main</code></pre>
 
 Please be aware whilst the data logger is started you will not be able to free
 up the terminal till you stop the data logger by pressing ctrl + c. It is best
@@ -212,8 +212,8 @@ If you encounter the following message:
 Permission denied: '/dev/ttyUSB0'
 
 it means the user needs to be added to the dialout group to gain access: `sudo
-usermod -a -G dialout $USER` where $USER is ther current user. If the
-datalogger is not going to be running as the current user, replace $USER with
+usermod -a -G dialout $USER` where <pre><code>$USER is ther current user. If the
+datalogger is not going to be running as the current user, replace <pre><code>$USER with
 the appropriate username. This may require the user to log out and back in or
 restart to take affect.
 
@@ -223,22 +223,22 @@ restart to take affect.
   2. By default the web directory is in /var/www. If you type in [http://localhost](http://localhost) in a web browser on the same computer where Apache is installed it would bring up a web page saying "It works!". This means it should be all set up and ready to go. You will require super user privileges to copy to this directory. There are two places you can put the web component: 
   3. To place it as the main page on the is the site e.g [http://www.mysite.com](http://www.mysite.com) copy the ~/web directory to /var/www directory: 
     
-    $ sudo cp -R ~/energyathome/web/* /var/www
+    <pre><code>$ sudo cp -R ~/energyathome/web/* /var/www</code></pre>
 
   4. To copy it to a sub directory e.g [http://www.mysite.com/energyathome](http://www.mysite.com/energyathome) do the following: 
     
-    $ sudo mkdir /var/www/energyathome
-    $ sudo cp -R ~/energyathome/web/* /var/www/energyathome
+    <pre><code>$ sudo mkdir /var/www/energyathome</code></pre>
+    <pre><code>$ sudo cp -R ~/energyathome/web/* /var/www/energyathome</code></pre>
 
   5. Edit the web configuration file at ~/var/www/energyathome/config/energyathome.ini to match your settings. 
   6. It is best to password protect this information. A simple method is to create a .htpassword and .htaccess files. The ~/web directory already contains a .htaccess file. All that is required is to change the "AuthUserFile" line. By default it assumes you used 3b as the web install. If path is different then amend the path according to your install. The authentication accepts any user specified in the .htpasswd stated in the "AuthUserFile" line. 
   7. Generate a .htpasswd file. This contains a username and their password. The password is encrypted in the file. Execute the following line, changing the path /var/www/energyathome to match your install and user to the username you want: 
     
-    $ sudo htpasswd -c /var/www/energyathome/.htpasswd user
+    <pre><code>$ sudo htpasswd -c /var/www/energyathome/.htpasswd user</code></pre>
 
   8. To add additional users to type in the same command as in step 5 but without the '-c' argument e.g: 
     
-    $ sudo htpasswd /var/www/energyathome/.htpasswd user2
+    <pre><code>$ sudo htpasswd /var/www/energyathome/.htpasswd user2</code></pre>
 
 By no means is this a secure way of password protecting the web front end but
 it's a simple method. If after going through the steps above no prompt for
