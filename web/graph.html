@@ -1,0 +1,54 @@
+<!--
+    This file is part of Energy@Home.
+	Copyright (C) 2009 Danny Tsang.
+	
+	This page also uses Flot library <http://code.google.com/p/flot/>
+	to generate the graph(s) which is under The MIT License.
+	
+    Energy@Home is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Energy@Home is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Energy@Home.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<html>
+	<head>
+	</head>
+	<body>
+		<table id="content">
+			<tr>
+				<td id="graphSettings">
+					<form name="graphSettingsForm">
+						Graph: <select id="graphType" onchange="graphTypeChange()";>
+							<option value="Time" selected>Period of Time</option>
+							<option value="Hour">Hours of The Day</option>
+							<option value="Total">Total Usage</option>
+						</select>
+						<label>Display Range: </label></label><input type="text" id="displayRange" size=1 maxlength="2" onkeyup="graphParameterChange()"> <select id="timeScale" onchange="graphParameterChange()";></select>
+						<br/>
+						<br/>
+						<label>Date: </label><input type="text" id="datepicker"> <label>Time: </label><input type="text" id="startHour" size=1 maxlength="2" onkeyup="">:<input type="text" id="startMinute" name="startMinute" size=1 maxlength="2" onkeyup=""> to <input type="text" id="endHour" name="endHour" size=1 maxlength="2" onkeyup="">:<input type="text" id="endMinute" name="endMinute" size=1 maxlength="2" onkeyup=""> <input type="button" value="Add" class="button" onclick="" /><div id="timeErrorMessage" style="float: right"></div>
+						<div>
+							<br/>
+							<label>Show Legend: </label><input type="checkbox" id="ShowLegend" onclick="showLegendChange()" checked />
+							<label>Zoom on select: </label><input type="checkbox" id="ZoomSelect" checked />
+							<br/>
+							<label>Auto refresh: </label><input type="checkbox" id="AutoRefresh" onclick="autoRefreshChange(this.checked)" checked /><!-- Refresh rate: <input type="text" name="RefreshRate" id="RefreshRate" size=20 value="30" /> secs-->
+							<input type="button" id="ResetZoom" value="Reset Zoom" class="button" onclick="resetZoom()" />
+							<input type="button" name="Test" id="Test" value="Test" class="button" onclick="" />
+						</div>
+					</form>
+					<br/>
+					<br/>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

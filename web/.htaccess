@@ -1,0 +1,4 @@
+AuthUserFile /var/www/energyathome/.htpasswd
+AuthName "energy@home requires a password"
+AuthType Basic
+Require valid-user
