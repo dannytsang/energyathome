@@ -17,13 +17,17 @@ See COPYING for more details about the licensing of this program.
 # FEATURES
 
   * Graphs to display usage and other statistics 
-  * Twitter integration Removed since authentication protocol have changed on Twitter. 
+  * ~~Twitter integration - Tweets summary messages of energy consumption hourly and / or daily.~~ Removed since authentication protocol have changed on Twitter. 
   * All free (cost) and free (freedom) software (see license) 
   * Customizable options including auto-refresh, zoom, multi channel and device acquisition and more 
   * Displays graph data in a table Currently disabled but set to be re-instated once fixed 
   * Tested with CurrentCost CC128 "Envi" device 
   * Intelligent and configurable data capture and storage using triggers and filters 
   * Requires standard Linux, Apache, MySQL, PHP (LAMP) set up with only Python as additional software requirement. 
+
+[<img src="http://www.dannytsang.co.uk/wp-content/uploads/2009/12/Energyathome-150x150.jpg">](http://www.dannytsang.co.uk/wp-content/uploads/2009/12/Energyathome.jpg "Standard energy@home")
+
+[<img src="https://www.dannytsang.co.uk/wp-content/uploads/2011/05/Grid-150x150.png">](http://www.dannytsang.co.uk/wp-content/uploads/2011/05/Grid.png "Data Grid")
 
 # INSTALL
 
