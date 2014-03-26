@@ -4,7 +4,10 @@ python:
   - "2.7"
 # command to install dependencies
 install:
-  - pip install python-serial python-mysqldb
-  - pip install python-mysqldb
+  - pip install python-serial
+  - pip install mysql-python --use-mirrors
+# setup
+before_script:
+  - mysql -e 'create database energyathome;'
 # command to run tests
 script: nosetests
