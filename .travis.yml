@@ -4,7 +4,7 @@ python:
   - "2.7"
 # command to install dependencies
 install:
-  - pip install python-serial
+  - pip install pyserial  --use-mirrors
   - pip install mysql-python --use-mirrors
 # setup
 before_script:
