@@ -27,7 +27,7 @@ See COPYING for more details about the licensing of this program.
 
 [<img src="http://www.dannytsang.co.uk/wp-content/uploads/2009/12/Energyathome-150x150.jpg">](http://www.dannytsang.co.uk/wp-content/uploads/2009/12/Energyathome.jpg "Standard energy@home")
 
-[<img src="https://www.dannytsang.co.uk/wp-content/uploads/2011/05/Grid-150x150.png">](http://www.dannytsang.co.uk/wp-content/uploads/2011/05/Grid.png "Data Grid")
+[<img src="http://www.dannytsang.co.uk/wp-content/uploads/2011/05/Grid-150x150.png">](http://www.dannytsang.co.uk/wp-content/uploads/2011/05/Grid.png "Data Grid")
 
 # INSTALL
 
