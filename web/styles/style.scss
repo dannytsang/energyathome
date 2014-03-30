@@ -15,15 +15,15 @@
     You should have received a copy of the GNU General Public License
     along with Energy@Home.  If not, see <http://www.gnu.org/licenses/>.
 */
+$textColor: #FFF;
 
 body {
 	background-color: #000000;
 	color: #545454;
-	
 }
 
 h1 {
-	color: #FFFFFF;
+	color: $textColor;
 	text-align: center;
 }
 
@@ -46,7 +46,7 @@ a:hover {
 }
 
 a:active {
-	color: #FFFFFF;
+	color: $textColor;
 }
 
 a:visited {
@@ -69,7 +69,7 @@ div#version {
 }
 
 span#clickdata {
-	color: #FFFFFF;
+	color: $textColor;
 }
 
 table#content {
@@ -78,7 +78,7 @@ table#content {
 
 #noscript {
 	background-color:#AE0000;
-	color:#FFFFFF;
+	color:$textColor;
 	font-family:sans-serif;
 	font-size:100%;
 	font-weight:bold;
