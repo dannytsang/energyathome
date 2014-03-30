@@ -68,7 +68,7 @@ This usually installs the latest version of MySQL according to the
 distribution. If that fails try installing a specific version:
 
     
-    <pre><code>$ sudo apt-get install mysql-server-5.1</code></pre>
+    <pre><code>$ sudo apt-get install mysql-server-5.5</code></pre>
 
 where 5.1 is the version of MySQL server.
 
@@ -107,7 +107,7 @@ and backing up easier.
 
 > To download a stable release version:
 
-  1. Go to [http://code.google.com/p/energyathome/downloads/list](http://code.google.com/p/energyathome/downloads/list)
+  1. Go to [https://github.com/dannytsang/energyathome/releases](https://github.com/dannytsang/energyathome/releases)
   2. Find and download the latest version. E.g energyathome_x.x.tar.gz 
   3. Extract the files: 
     
@@ -119,7 +119,7 @@ and backing up easier.
 
   5. To download the latest version in the repository install mercurial source control software: 
     
-    <pre><code>$ sudo apt-get install mercurial</code></pre>
+    <pre><code>$ sudo apt-get install git</code></pre>
 
   6. Then checkout the latest code: 
     
