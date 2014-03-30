@@ -68,7 +68,7 @@ This usually installs the latest version of MySQL according to the
 distribution. If that fails try installing a specific version:
 
     
-    <pre><code>$ sudo apt-get install mysql-server-5.1</code></pre>
+    <pre><code>$ sudo apt-get install mysql-server-5.5</code></pre>
 
 where 5.1 is the version of MySQL server.
 
