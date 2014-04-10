@@ -85,7 +85,7 @@ def insertData(historicalData):
                 LOGGER.debug(sql)
                 
                 # Build values
-                values = (historicalData.time.isoformat(' '), channelId, value, "W")
+                values = [historicalData.time.isoformat(' '), channelId, value, "W"]
                 LOGGER.debug(values)
                 
                 DATABASE.executeNonUpdate(sql, values)
@@ -103,7 +103,7 @@ def insertData(historicalData):
             LOGGER.debug(sql)
             
             # Build values
-            values = (historicalData.time.isoformat(' '), channelId, historicalData.temperature, "C")
+            values = [historicalData.time.isoformat(' '), channelId, historicalData.temperature, "C"]
             LOGGER.debug(values)
             
             DATABASE.executeNonUpdate(sql, values)
@@ -129,7 +129,7 @@ def createDevice(historicalData):
     "VALUES (%s, %s, %s)"
     LOGGER.debug(sql)
     
-    values = (historicalData.name, historicalData.applianceId, historicalData.sensorType)
+    values = [historicalData.name, historicalData.applianceId, historicalData.sensorType]
     LOGGER.debug(values)
     
     return DATABASE.executeNonUpdate(sql, values)
@@ -147,7 +147,7 @@ def createChannel(deviceId, channel):
     sql = "INSERT INTO channel (device_id, channel) VALUES (%s, %s)"
     LOGGER.debug(sql)
     
-    values = (deviceId, channel)
+    values = [deviceId, channel]
     LOGGER.debug(values)
     
     return DATABASE.executeNonUpdate(sql, values)
@@ -162,7 +162,7 @@ def getDeviceId(name, applianceId, sensorType):
     "AND appliance_id = %s AND sensor_type = %s ORDER BY device_id"
     LOGGER.debug(sql)
     
-    values = (name, applianceId, sensorType)
+    values = [name, applianceId, sensorType]
     LOGGER.debug(values)
     
     return DATABASE.executeOneUpdate(sql, values)
@@ -176,9 +176,9 @@ def getChannelId(deviceId, channel):
     sql = "SELECT c.channel_id FROM channel c WHERE"
     if deviceId is not None:
         sql += " c.device_id = %s AND "
-        values = (deviceId, channel)
+        values = [deviceId, channel]
     else:
-        values = (channel)
+        values = [channel]
     
     sql += " c.channel = %s ORDER BY c.channel_id LIMIT 1"
     LOGGER.debug(sql)
@@ -238,7 +238,7 @@ def getLastHistoricalData(historicalData):
         LOGGER.debug(sql)
         
         # Build values
-        values = (historicalData.time, historicalData.name, historicalData.applianceId, historicalData.sensorType)
+        values = [historicalData.time, historicalData.name, historicalData.applianceId, historicalData.sensorType]
         LOGGER.debug(values)
         
         # Execute query and store results
