@@ -39,7 +39,7 @@ Python 2.6.5 PySerial 2.3 PyMySQLDB 1.2.2
 
 ## Database
 
-MySQL 5.1
+MySQL 5.5
 
 ## web
 
@@ -70,7 +70,7 @@ distribution. If that fails try installing a specific version:
     
     <pre><code>$ sudo apt-get install mysql-server-5.5</code></pre>
 
-where 5.1 is the version of MySQL server.
+where 5.5 is the version of MySQL server.
 
 It will ask for the root password and confirmation of the root password.
 Ensure this is strong password because it will have access to everything on
