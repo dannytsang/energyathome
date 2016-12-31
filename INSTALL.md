@@ -35,7 +35,7 @@ considered as minimum requirement:
 
 ## datalogger
 
-Python 2.6.5 PySerial 2.3 PyMySQLDB 1.2.2
+Python 2.7.11 PySerial 3.0 PyMySQLDB 1.3.7
 
 ## Database
 
