@@ -47,7 +47,7 @@
 		//$applianceChannelCount = countChannelsPerAppliance($applianceChannels);
 		
 		// Loop through results again to build data to be returned
-		while ($row = mysql_fetch_array($applianceChannels))
+		while ($row = mysqli_fetch_array($applianceChannels))
 		{
 			$where = getHourSqlWhereClause($row[$CHANNEL_ID_PK_FIELD_NAME], $timeScale);
 			$group = getHourSqlGroupByClause();
@@ -133,7 +133,7 @@
 		// Reference config file
 		include 'config.php';
 		
-		return " GROUP BY HOUR(" . $DATE_TIME_FIELD_NAME . ")";
+		return " GROUP BY HOUR(" . $DATE_TIME_FIELD_NAME . "), " . $UNIT_FIELD_NAME;
 	}
 	
 	/*
