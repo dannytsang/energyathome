@@ -54,7 +54,7 @@
 		
 		$count = 0;
 		
-		while ($row = mysql_fetch_array($applianceChannels))
+		while ($row = mysqli_fetch_array($applianceChannels))
 		{
 			$where = getTimeSqlWhereClause($row[$CHANNEL_ID_PK_FIELD_NAME], $range, $timeScale);
 			$group = getTimeSqlGroupClause($timeScale);
@@ -116,7 +116,7 @@
 		$applianceChannels = getDeviceChannels();
 		$applianceArray = array();
 		
-		while ($row = mysql_fetch_array($applianceChannels))
+		while ($row = mysqli_fetch_array($applianceChannels))
 		{
 			// Check if the appliance last datapoint was passed
 			if(isset($_GET["lastEnergyDataPoint_" . $row[$CHANNEL_ID_PK_FIELD_NAME ]]))
@@ -167,7 +167,7 @@
 		
 		$count = 0;
 		
-		while ($row = mysql_fetch_array($appliances))
+		while ($row = mysqli_fetch_array($appliances))
 		{
 			$where = "";
 			$group = getTimeSqlGroupClause($timeScale);

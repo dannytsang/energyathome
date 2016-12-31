@@ -22,16 +22,16 @@
 		// Reference config file
 		include 'config.php';
 		// open connection to database
-		$connection = mysql_connect($DB_HOST, $DB_USER, $DB_PASSWORD) or die ("Unable to connect!");
+		$connection = mysqli_connect($DB_HOST, $DB_USER, $DB_PASSWORD) or die ("Unable to connect!");
 		
 		// select database
-		mysql_select_db($DB_SCHEMA) or die ("Unable to select database!");
+		mysqli_select_db($connection, $DB_SCHEMA) or die ("Unable to select database!");
 		
 		// Execute query
-		$result = mysql_query($queryString) or die ("Error in query: '" . $queryString . "'. Error: " . mysql_error());
+		$result = mysqli_query($connection, $queryString) or die ("Error in query: '" . $queryString . "'. Error: " . mysqli_error($connection));
 		
 		// Close database connection
-		mysql_close($connection);
+		mysqli_close($connection);
 		
 		return $result;
 	}
@@ -41,11 +41,11 @@
 	 */
 	function convertResultToArray($data)
 	{
-		$num_rows = mysql_num_rows($data);
+		$num_rows = mysqli_num_rows($data);
 		$result = array();
 		if ($num_rows > 0)
 		{
-			while ($row = mysql_fetch_row($data))
+			while ($row = mysqli_fetch_row($data))
 			{
 				array_push($result, array(strval($row[0]), strval($row[1]), strval($row[2])));
 			}
