@@ -57,13 +57,14 @@
 		
 		while ($row = mysqli_fetch_array($applianceChannels))
 		{
-			$query = "";			
+			// Get channel ID
+			$channelId = $row[$CHANNEL_ID_PK_FIELD_NAME];
 			
 			/* Only average data if time frame is not for an hour.
 			 * Hour times return raw data and therefore are not grouped
 			 * and averaged to reduce data when AJAX 'GET' request is sent
 			 */
-			$query = getTimeSql($row[$CHANNEL_ID_PK_FIELD_NAME], $range, $timeScale);
+			$query = getTimeSql($channelId, $range, $timeScale, null);
 			
 			$result = executeQuery($query);
 			
@@ -71,7 +72,7 @@
 			
 			if ($row[$CHANNEL_FIELD_NAME] != "temp")
 			{
-				$seriesArray = array("chId" => $row[$CHANNEL_ID_PK_FIELD_NAME], "label" => $row[$APPLIANCE_DISPLAY_NAME_FIELD_NAME], 
+				$seriesArray = array("chId" => $channelId, "label" => $row[$APPLIANCE_DISPLAY_NAME_FIELD_NAME], 
 								"lines" => array("fill" => true), "color" => $count, "data" => convertResultToArray($result));
 			}
 			else
@@ -101,6 +102,7 @@
 	{
 		include 'config.php';
 		include 'general.php';
+		include 'time_sql.php';
 		
 		// Get all the appliances to retrieve data for
 		$applianceChannels = getDeviceChannels();
@@ -111,28 +113,16 @@
 			// Check if the appliance last datapoint was passed
 			if(isset($_GET["lastEnergyDataPoint_" . $row[$CHANNEL_ID_PK_FIELD_NAME ]]))
 			{
+				// Get datapoint for channel
 				$lastDataPoint = $_GET["lastEnergyDataPoint_" . $row[$CHANNEL_ID_PK_FIELD_NAME ]];
-				$where = updateSqlWhereClause($row[$CHANNEL_ID_PK_FIELD_NAME], $lastDataPoint);
-				$group = getTimeSqlGroupClause($timeScale);
-				$order = getTimeSqlOrderClause();
+				// Get channel ID
+				$channelId = $row[$CHANNEL_ID_PK_FIELD_NAME];
 				
-				$query = "SELECT UNIX_TIMESTAMP(" . $DATE_TIME_FIELD_NAME . ") * 1000, ";
-				/* Only average data if time frame is not for an hour.
-				 * Hour times return raw data and therefore are not grouped
-				 * and averaged to reduce data when AJAX 'GET' request is sent
-				 */
-				if ($timeScale != "Hour")
-				{
-					$query .= "AVG(" . $DATA_FIELD_NAME . ")";
-				}
-				else
-				{
-					$query .= $DATA_FIELD_NAME;
-				}
-				$query .= ", " . $UNIT_FIELD_NAME . " FROM " . $DATA_TABLE_FIELD_NAME . $where . $group . $order;
+				// Get SQL query
+				$query = getTimeSql($channelId, $range, $timeScale, $lastDataPoint);
 				$result = executeQuery($query);
 				
-				$seriesArray = array("chId" => $row[$CHANNEL_ID_PK_FIELD_NAME], "data" => convertResultToArray($result));
+				$seriesArray = array("chId" => $channelId, "data" => convertResultToArray($result));
 				
 				array_push($applianceArray, $seriesArray);
 			}
@@ -413,61 +403,6 @@
 	}
 	
 	/*
-	 * $range select range to display e.g "1" day, "20" hours
-	 * $timeScale units of range e.g "day", "month"
-	 */
-	function getTimeSqlWhereClause($channelId, $range, $timeScale)
-	{
-		include 'config.php';
-		
-		$where = "";
-		// Cast string to int to check it's a valid integer
-		$intRange = (int)$range;
-		// Check range value. Default value if not set
-		if ($range <= 0)
-		{
-			$range = 1;
-		}
-		
-		if ($timeScale == "Hour")
-		{
-			$where = " WHERE " . $DATE_TIME_FIELD_NAME . " >= ADDDATE(NOW(), INTERVAL -" . $range . " HOUR)";
-		}
-		elseif ($timeScale == "Day")
-		{
-			$where = " WHERE " . $DATE_TIME_FIELD_NAME . " >= ADDDATE(NOW(), INTERVAL -" . $range . " Day) ";
-		}
-		elseif ($timeScale == "Week")
-		{
-			$where = " WHERE " . $DATE_TIME_FIELD_NAME . " >= ADDDATE(NOW(), INTERVAL -" . $range . " Week) ";
-		}
-		elseif ($timeScale == "Month")
-		{
-			$where = " WHERE " . $DATE_TIME_FIELD_NAME . " >= ADDDATE(NOW(), INTERVAL -" . $range . " Month) ";
-		}
-		elseif ($timeScale == "Year")
-		{
-			$where = " WHERE " . $DATE_TIME_FIELD_NAME . " >= ADDDATE(NOW(), INTERVAL -" . $range . " Year) ";
-		}
-		
-		if (isset($channelId))
-		{
-			if (strlen($where) > 0)
-			{
-				$where .= " AND ";
-			}
-			else
-			{
-				$where .= " WHERE ";
-			}
-			
-			$where .= "channel_id = " . $channelId . " ";
-		}
-		
-		return $where;
-	}
-	
-	/*
 	 * $timeScale units of range e.g "day", "month"
 	 */
 	function getTimeSqlGroupClause($timeScale)
@@ -501,42 +436,6 @@
 		include 'config.php';
 		
 		return " ORDER BY " . $DATE_TIME_FIELD_NAME;
-	}
-	
-	// Check if update or full data set is required.
-	// Update only returns datasets from a date where as
-	// no update returns the full dataset for parameters.
-	function updateSqlWhereClause($channelId, $lastDataPoint)
-	{
-		include 'config.php';
-		
-		// Full data required if left empty
-		$where = "";
-		
-		// Add channel ID to where clause if it's set
-		if (isset($channelId))
-		{
-			// Check if an And is needed if the $where variable length is greater than 0
-			if(strlen($where) > 0)
-			{
-				$where .= " AND";
-			}
-			
-			$where .= " " . $CHANNEL_ID_PK_FIELD_NAME . " = " . $channelId;
-		}
-		
-		if (isset($lastDataPoint))
-		{
-			// Check if an And is needed if the $where variable length is greater than 0
-			if(strlen($where) > 0)
-			{
-				$where .= " AND";
-			}
-			
-			$where .=  " (UNIX_TIMESTAMP(" . $DATE_TIME_FIELD_NAME . ") * 1000) > " . $lastDataPoint . " ";
-		}
-		
-		return " WHERE " . $where;
 	}
 	
 	/*
