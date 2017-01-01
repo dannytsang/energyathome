@@ -47,6 +47,7 @@
 	{
 		include 'config.php';
 		include 'general.php';
+		include 'time_sql.php';
 		
 		// Get all the appliances and channels per appliance to retrieve data for
 		$applianceChannels = getDeviceChannels();
@@ -56,24 +57,13 @@
 		
 		while ($row = mysqli_fetch_array($applianceChannels))
 		{
-			$where = getTimeSqlWhereClause($row[$CHANNEL_ID_PK_FIELD_NAME], $range, $timeScale);
-			$group = getTimeSqlGroupClause($timeScale);
-			$order = getTimeSqlOrderClause();
+			$query = "";			
 			
-			$query = "SELECT UNIX_TIMESTAMP(" . $DATE_TIME_FIELD_NAME . ") * 1000, ";
 			/* Only average data if time frame is not for an hour.
 			 * Hour times return raw data and therefore are not grouped
 			 * and averaged to reduce data when AJAX 'GET' request is sent
 			 */
-			if ($timeScale != "Hour")
-			{
-				$query .= "AVG(" . $DATA_FIELD_NAME . ")";
-			}
-			else
-			{
-				$query .= $DATA_FIELD_NAME;
-			}
-			$query .= ", " . $UNIT_FIELD_NAME . " FROM " . $DATA_TABLE_FIELD_NAME . $where . $group . $order;
+			$query = getTimeSql($row[$CHANNEL_ID_PK_FIELD_NAME], $range, $timeScale);
 			
 			$result = executeQuery($query);
 			
@@ -488,19 +478,19 @@
 		
 		if ($timeScale == "Day")
 		{
-			$group = " GROUP BY DATE(" . $DATE_TIME_FIELD_NAME . "), HOUR(" . $DATE_TIME_FIELD_NAME . "), MINUTE(" . $DATE_TIME_FIELD_NAME . ") - (MINUTE(" . $DATE_TIME_FIELD_NAME . ") % 10)";
+			$group = " GROUP BY DATE(" . $DATE_TIME_FIELD_NAME . "), HOUR(" . $DATE_TIME_FIELD_NAME . "), MINUTE(" . $DATE_TIME_FIELD_NAME . ") - (MINUTE(" . $DATE_TIME_FIELD_NAME . ") % 10), " . $UNIT_FIELD_NAME;
 		}
 		elseif ($timeScale == "Week")
 		{
-			$group = " GROUP BY DATE(" . $DATE_TIME_FIELD_NAME . "), HOUR(" . $DATE_TIME_FIELD_NAME . ") - (HOUR(" . $DATE_TIME_FIELD_NAME . ") % 6)";
+			$group = " GROUP BY DATE(" . $DATE_TIME_FIELD_NAME . "), HOUR(" . $DATE_TIME_FIELD_NAME . ") - (HOUR(" . $DATE_TIME_FIELD_NAME . ") % 6), " . $UNIT_FIELD_NAME;
 		}
 		elseif ($timeScale == "Month")
 		{
-			$group = " GROUP BY YEAR(" . $DATE_TIME_FIELD_NAME . "), MONTH(" . $DATE_TIME_FIELD_NAME . "), DAY(" . $DATE_TIME_FIELD_NAME . ") - (DAY(" . $DATE_TIME_FIELD_NAME . ") % 1)";
+			$group = " GROUP BY YEAR(" . $DATE_TIME_FIELD_NAME . "), MONTH(" . $DATE_TIME_FIELD_NAME . "), DAY(" . $DATE_TIME_FIELD_NAME . ") - (DAY(" . $DATE_TIME_FIELD_NAME . ") % 1), " . $UNIT_FIELD_NAME;
 		}
 		elseif ($timeScale == "Year")
 		{
-			$group = " GROUP BY YEAR(" . $DATE_TIME_FIELD_NAME . "), MONTH(" . $DATE_TIME_FIELD_NAME . ") - (MONTH(" . $DATE_TIME_FIELD_NAME . ") % 1)";
+			$group = " GROUP BY YEAR(" . $DATE_TIME_FIELD_NAME . "), MONTH(" . $DATE_TIME_FIELD_NAME . ") - (MONTH(" . $DATE_TIME_FIELD_NAME . ") % 1), " . $UNIT_FIELD_NAME;
 		}
 		
 		return $group;
