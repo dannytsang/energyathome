@@ -23,6 +23,7 @@
 	 * $channelId database primary key for device channel
 	 * $range select range to display e.g "1" day, "20" hours
 	 * $timeScale units of range e.g "day", "month"
+	 * $lastDataPoint unix timestamp of the last data point so it only returns new values after this datetime
 	 */
 	function getTimeSql($channelId, $range, $timeScale, $lastDataPoint)
 	{
@@ -60,6 +61,14 @@
 		return $sql;
 	}
 
+	/*
+	 * Returns WHERE clause SQL required for graph parameters.
+	 *
+	 * $channelId database primary key for device channel
+	 * $range select range to display e.g "1" day, "20" hours
+	 * $timeScale units of range e.g "day", "month"
+	 * $lastDataPoint unix timestamp of the last data point so it only returns new values after this datetime
+	 */
 	function getChannelWhereClause($channelId, $range, $timeScale, $lastDataPoint)
 	{
 		include 'config.php';
@@ -151,5 +160,24 @@
 		}
 
 		return $where;
+	}
+
+	/*
+	 * Returns a list of devices and channels.
+	 */
+	function getDeviceChannels()
+	{
+		include 'config.php';
+		
+		$query = "SELECT c." . $CHANNEL_ID_PK_FIELD_NAME . ", c." . $CHANNEL_FIELD_NAME . ", CONCAT(d." . $APPLIANCE_DISPLAY_NAME_FIELD_NAME . 
+				", CASE (SELECT COUNT(c2." . $CHANNEL_ID_PK_FIELD_NAME . ") FROM " . 
+				$CHANNEL_TABLE_FIELD_NAME . " c2 WHERE c2." . 
+				$APPLIANCE_ID_FK_FIELD_NAME . " = d." . $APPLIANCE_ID_FIELD_NAME . " AND c2.channel <> 'temp') WHEN 1 THEN '' ELSE CONCAT(' (', c." . $CHANNEL_FIELD_NAME . 
+				", ')') END) AS display_name" . " FROM " . $APPLIANCE_TABLE_FIELD_NAME . " d LEFT JOIN " . $CHANNEL_TABLE_FIELD_NAME . 
+				" c ON c." . $APPLIANCE_ID_FK_FIELD_NAME . " = d." . $APPLIANCE_ID_FIELD_NAME . " ORDER BY d." . $APPLIANCE_APP_ID_FIELD_NAME;
+		
+		$result = executeQuery($query);
+		
+		return $result;
 	}
 ?>
