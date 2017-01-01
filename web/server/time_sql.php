@@ -103,7 +103,7 @@
 		// Add update filter to query
 		if (isset($lastDataPoint))
 		{		
-			$where .= updateSqlWhereClause($channelId, true);
+			$where .= updateSqlWhereClause($lastDataPoint, true);
 		}
 
 		return $where;
