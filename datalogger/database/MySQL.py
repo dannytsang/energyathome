@@ -59,15 +59,15 @@ class MySQL(object):
         sys.path.append("..")
         
         if self.CONFIG is None:
-            print "Unable to get configuration manager. Exit"
+            self.LOGGER.critical("Unable to get configuration manager. Exit")
             sys.exit(1)
         
         if self.RETRIES is None:
-            print "No DB retry value set. Using default value"
+            self.LOGGER.info("No DB retry value set. Using default value")
             self.RETRIES = 3
         
         if self.WAIT is None:
-            print "No DB wait value set. Using default value"
+            self.LOGGER.info("No DB wait value set. Using default value")
             self.WAIT = 60
 
     # Connect to MySQL using settings from DatabaseConfig.py
@@ -154,10 +154,10 @@ class MySQL(object):
                 break
             
             except MySQLdb.Error as e:
-                print "Caught error:"
-                print e.args[0], e.args[1]
+                self.LOGGER.error(e, exc_info=True)
+                self.LOGGER.debug(cursor._last_executed)
                 
-                print "Retrying in " + str(self.WAIT) + " secs"
+                self.LOGGER.error("Retrying in " + str(self.WAIT) + " secs")
                 # Increment number of times it has tried to execute this function
                 attempts += 1
                 time.sleep(self.WAIT)
@@ -170,8 +170,8 @@ class MySQL(object):
                     
                 except MySQLdb.Error as e:
                     # Ignore connect error and gracefully exit function
-                    print "DB reconnect failed:"
-                    print e.args[0], e.args[1]
+                    self.LOGGER.error("DB reconnect failed:")
+                    self.LOGGER.error(e, exc_info=True)
                     raise
                 pass
                 
@@ -203,10 +203,10 @@ class MySQL(object):
                 return results
             
             except MySQLdb.Error as e:
-                print "Caught error:"
-                print e.args[0], e.args[1]
+                self.LOGGER.error(e, exc_info=True)
+                self.LOGGER.debug(cursor._last_executed)
                 
-                print "Retrying in " + str(self.WAIT) + " secs"
+                self.LOGGER.error("Retrying in " + str(self.WAIT) + " secs")
                 # Increment number of times it has tried to execute this function
                 attempts += 1
                 time.sleep(self.WAIT)
@@ -218,10 +218,11 @@ class MySQL(object):
                     self.connect()
                 except MySQLdb.Error as e:
                     # Ignore connect error and gracefully exit function
-                    print "DB reconnect failed:"
-                    print e.args[0], e.args[1]
+                    self.LOGGER.error("DB reconnect failed:")
+                    self.LOGGER.error(e, exc_info=True)
                     raise
                 except ConnectionException as ce:
+                    self.LOGGER.error(ce, exc_info=True)
                     raise ce
                 pass
                 
@@ -257,10 +258,11 @@ class MySQL(object):
                 return result
             
             except MySQLdb.Error as e:
-                print "Caught error:"
-                print e.args[0], e.args[1]
+                self.LOGGER.error(e, exc_info=True)
                 
-                print "Retrying in " + str(self.WAIT) + " secs"
+                self.LOGGER.error("Retrying in " + str(self.WAIT) + " secs")
+                
+                self.LOGGER.error("Retrying in " + str(self.WAIT) + " secs")
                 # Increment number of times it has tried to execute this function
                 attempts += 1
                 time.sleep(self.WAIT)
@@ -273,8 +275,8 @@ class MySQL(object):
                     
                 except ConnectionException as ce:
                     # Ignore connect error and gracefully exit function
-                    print "DB reconnect failed:"
-                    print e.args[0], e.args[1]
+                    self.LOGGER.error("DB reconnect failed:")
+                    self.LOGGER.error(ce, exc_info=True)
                     raise ce
                 
             except AttributeError as ae:
@@ -284,3 +286,4 @@ class MySQL(object):
                 
         # Fail after retry
         return None
+
