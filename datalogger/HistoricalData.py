@@ -234,7 +234,7 @@ def getLastHistoricalData(historicalData):
             
             sql+= " AND (" + channelSql + ")"
         
-        sql += " GROUP BY c.channel ORDER BY h.date_time, channel"
+        sql += " GROUP BY c.channel_id, c.channel, h.data ORDER BY h.date_time, c.channel, c.channel_id, h.data"
         LOGGER.debug(sql)
         
         # Build values
@@ -275,3 +275,4 @@ def getLastHistoricalData(historicalData):
     
     # Return record
     return lastHistoricalData
+
