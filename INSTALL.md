@@ -255,3 +255,11 @@ There is a config file inside the web/server directory called config.php. This
 also needs the database log in details. There are other options such as
 database name should these be different from the default but generally it
 should work without any changes.
+
+# Upgrade
+## 0.7.3
+A new numeric primary key has been introduced which requires modifying any existing installation. When applying this, there maybe data problems around dates in historical_data.date_time field. Take a backup before doing any of the below.
+
+To find and remove this follow the instructions in [here](https://gist.github.com/dannytsang/1de83d0ecc490cb31aa01c44669e0582).
+
+Once complete, run [this](https://gist.github.com/dannytsang/5663dd940df6ce59436523f610387c4e) to add the new primary key.
