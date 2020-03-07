@@ -20,200 +20,188 @@
 
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
-try:
-    import ConfigParser as configParser
-except:
-    import configparser as configParser
-    
+
+import ConfigParser as configParser
+
 import os
 import logging, logging.config
 
+
 class ConfigManager:
-    '''Load and stores configuration values.'''
+    """Load and stores configuration values."""
     PARSER = None
-    
-    CONFIG_DIR = ""
-    
+
+    _CONFIG_DIR = ""
+
     def __init__(self):
-        
-        global CONFIG_DIR
-        
+
+        self._CONFIG_DIR
+
         self.CONFIG_FILENAME = "energyathome.ini"
-        
+
         # Instantiate logging
-        logConfigPath = os.path.dirname(__file__) + os.sep + "energyathome.ini"
-        print logConfigPath
-        logging.config.fileConfig(logConfigPath)
-        self.LOGGER = logging.getLogger("energyathome.datalogger.config.config")
-        
+        log_config_path = os.path.dirname(__file__) + os.sep + "energyathome.ini"
+        print(log_config_path)
+        logging.config.fileConfig(log_config_path)
+        self._LOGGER = logging.getLogger("energyathome.datalogger.config.config")
+
         try:
             # Get the parent directory of this file and append the config file name
-            CONFIG_DIR = os.path.dirname(__file__)
+            _CONFIG_DIR = os.path.dirname(__file__)
             # If there is no parent directory then do not add a file path separator
-            if(os.path.dirname(__file__) != ""):
-                CONFIG_DIR += os.sep
-            CONFIG_DIR += self.CONFIG_FILENAME
-            
+            if os.path.dirname(__file__) != "":
+                _CONFIG_DIR += os.sep
+            _CONFIG_DIR += self.CONFIG_FILENAME
+
             # Initialized config parser
-            self.PARSER = configParser.SafeConfigParser(defaults = None)
+            self.PARSER = configParser.SafeConfigParser(defaults=None)
             # Config file is required. Get Config.py file directory location
-            self.PARSER.readfp(open(CONFIG_DIR))
-            
-        except(IOError), ie:
-            self.LOGGER.error("Config File '" + CONFIG_DIR + "' not found")
-            self.LOGGER.error("Details: " + str(ie.args))
+            self.PARSER.readfp(open(_CONFIG_DIR))
 
-    def getConfigFilePath(self):
-        ''' Returns the absolute path to the config file being used'''
-        
-        global CONFIG_DIR
-        
-        return CONFIG_DIR
+        except IOError as ie:
+            self._LOGGER.error("Config File '" + _CONFIG_DIR + "' not found")
+            self._LOGGER.error("Details: " + str(ie.args))
 
-    def getConfig(self, category, key):
-        '''category = section of the config e.g Database, Twitter, etc
-        key = the name of the configuration item e.g username, password'''
-        
+    def get_config_file_path(self):
+        """Returns the absolute path to the config file being used"""
+
+        return self._CONFIG_DIR
+
+    def get_config(self, category, key):
+        """category = section of the config e.g Database, Twitter, etc
+        key = the name of the configuration item e.g username, password"""
+
         try:
             # Ensure PARSER object has been instantiated
             if self.PARSER is not None:
                 # Return value
                 return self.PARSER.get(category, key)
             else:
-                self.LOGGER.error("Error: PARSER has not been instantiated")
+                self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
-            
-        except(configParser.NoSectionError), nse:
-            self.LOGGER.error("No configuration category of '" + str(category) + "' was found.")
+
+        except configParser.NoSectionError as nse:
+            self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        
-        except(configParser.NoOptionError), nse:
-            self.LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
+        except configParser.NoOptionError as nse:
+            self._LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
             return None
-        
+
         except ValueError as ve:
-            self.LOGGER.error("Configuration '" + key + "' in '" + str(category) + "' has an invalid value.")
-            self.LOGGER.error(str(ve))
+            self._LOGGER.error("Configuration '" + key + "' in '" + str(category) + "' has an invalid value.")
+            self._LOGGER.error(str(ve))
             return None
-    
-    def getIntConfig(self, category, key):
-        '''category = section of the config e.g Database, Twitter, etc
-        key = the name of the configuration item e.g username, password'''
-        
+
+    def get_int_config(self, category, key):
+        """category = section of the config e.g Database, Twitter, etc
+        key = the name of the configuration item e.g username, password"""
+
         try:
             # Ensure PARSER object has been instantiated
             if self.PARSER is not None:
                 # Return value
                 return self.PARSER.getint(category, key)
             else:
-                self.LOGGER.error("Error: PARSER has not been instantiated")
+                self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
-            
-        except(configParser.NoSectionError), nse:
-            self.LOGGER.error("No configuration category of '" + str(category) + "' was found.")
+
+        except configParser.NoSectionError as nse:
+            self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        
-        except(configParser.NoOptionError), nse:
-            self.LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
+        except configParser.NoOptionError as nse:
+            self._LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
             return None
-        
         except ValueError as ve:
-            self.LOGGER.error("Configuration '" + key + "' in '" + str(category) + "' has an invalid value.")
-            self.LOGGER.error(str(ve))
+            self._LOGGER.error("Configuration '" + key + "' in '" + str(category) + "' has an invalid value.")
+            self._LOGGER.error(str(ve))
             return None
-    
-    def getFloatConfig(self, category, key):
-        '''category = section of the config e.g Database, Twitter, etc
-        key = the name of the configuration item e.g username, password'''
-        
+
+    def get_float_config(self, category, key):
+        """category = section of the config e.g Database, Twitter, etc
+        key = the name of the configuration item e.g username, password"""
+
         try:
             # Ensure PARSER object has been instantiated
             if self.PARSER is not None:
                 # Return value
                 return self.PARSER.getfloat(category, key)
             else:
-                self.LOGGER.error("Error: PARSER has not been instantiated")
+                self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
-            
-        except(configParser.NoSectionError), nse:
-            self.LOGGER.error("No configuration category of '" + str(category) + "' was found.")
+
+        except configParser.NoSectionError as nse:
+            self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        
-        except(configParser.NoOptionError), nse:
-            self.LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
+        except configParser.NoOptionError as nse:
+            self._LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
             return None
-        
         except ValueError as ve:
-            self.LOGGER.error("Configuration '" + key + "' in '" + str(category) + "' has an invalid value.")
-            self.LOGGER.error(str(ve))
+            self._LOGGER.error("Configuration '" + key + "' in '" + str(category) + "' has an invalid value.")
+            self._LOGGER.error(str(ve))
             return None
-    
-    def getBooleanConfig(self, category, key):
-        '''category = section of the config e.g Database, Twitter, etc
-        key = the name of the configuration item e.g username, password'''
-        
+
+    def get_boolean_config(self, category, key):
+        """category = section of the config e.g Database, Twitter, etc
+        key = the name of the configuration item e.g username, password"""
+
         try:
             # Ensure PARSER object has been instantiated
             if self.PARSER is not None:
                 # Return value
                 return self.PARSER.getboolean(category, key)
             else:
-                self.LOGGER.error("Error: PARSER has not been instantiated")
+                self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
-            
-        except(configParser.NoSectionError), nse:
-            self.LOGGER.error("No configuration category of '" + str(category) + "' was found.")
+
+        except configParser.NoSectionError as nse:
+            self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        
-        except(configParser.NoOptionError), nse:
-            self.LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
+        except configParser.NoOptionError as nse:
+            self._LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
             return None
-        
         except ValueError as ve:
-            self.LOGGER.error("Configuration '" + key + "' in '" + str(category) + "' has an invalid value.")
-            self.LOGGER.error(str(ve))
+            self._LOGGER.error("Configuration '" + key + "' in '" + str(category) + "' has an invalid value.")
+            self._LOGGER.error(str(ve))
             return None
-        
-    def getListConfig(self, category, key):
-        '''Returns a config item which is comma separated into a list'''
-        
-        value = self.getConfig(category, key)
-        
+
+    def get_list_config(self, category, key):
+        """Returns a config item which is comma separated into a list"""
+
+        value = self.get_config(category, key)
+
         if value is not None and len(value) > 0:
             return value.split(",")
-        
+
         else:
             return None
-    
-    def setConfig(self, category, key, value):
-        '''Expects an instance of a defined class below'''
-        
-    def getConfigCategory(self, category):
-        '''category = section of the config e.g Database, Twitter, etc
-        returns: dictionary of all the settings.'''
-        
+
+    def set_config(self, category, key, value):
+        """Expects an instance of a defined class below"""
+
+    def get_config_category(self, category):
+        """category = section of the config e.g Database, Twitter, etc
+        returns: dictionary of all the settings."""
+
         try:
             # Ensure PARSER object has been instantiated
             if self.PARSER is not None:
-                allConfig = self.PARSER._sections
-                
+                all_config = self.PARSER._sections
+
                 # Return value
-                if(category in allConfig):
-                    return allConfig[category]
+                if category in all_config:
+                    return all_config[category]
                 else:
                     return None
             else:
-                self.LOGGER.error("Error: PARSER has not been instantiated")
+                self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
-        except(configParser.NoSectionError), nse:
-            self.LOGGER.error("No configuration category of '" + str(category) + "' was found.")
+        except configParser.NoSectionError as nse:
+            self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        
-        except(configParser.NoOptionError), nse:
-            self.LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
+        except configParser.NoOptionError as nse:
+            self._LOGGER.error("No configuration '" + category + "' was found in '" + str(category) + "'category.")
             return None
-        
         except ValueError as ve:
-            self.LOGGER.error("Configuration '" + key + "' in '" + str(category) + "' has an invalid value.")
-            self.LOGGER.error(str(ve))
+            self._LOGGER.error("Configuration '" + category + "' in '" + str(category) + "' has an invalid value.")
+            self._LOGGER.error(str(ve))
             return None

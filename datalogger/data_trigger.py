@@ -99,7 +99,7 @@ class CheckLiveTriggers:
         # Check timeout trigger condition first as it's most common condition to
         # trigger a save point. Ignoring device time so using system time
         if (datetime.today() - previous_data_point.time) >= timedelta(
-                seconds=self.CONFIG.getIntConfig("Trigger", "timeout")):
+                seconds=self.CONFIG.get_int_config("Trigger", "timeout")):
             _LOGGER.info("Timeout trigger condition met with " + \
                          str(datetime.today() - previous_data_point.time) + " delta")
             return True
@@ -117,7 +117,7 @@ class CheckLiveTriggers:
                 # Calculate the difference from last data point and the new one
                 energyDiff = math.fabs(value) - previous_data_point.energy[key]
 
-                if energyDiff >= self.CONFIG.getFloatConfig("Trigger", "energyvariation"):
+                if energyDiff >= self.CONFIG.get_float_config("Trigger", "energyvariation"):
                     _LOGGER.info("Energy trigger condition met with " + str(key) + " " + str(energyDiff) + "w delta")
                     return True
 
@@ -134,7 +134,7 @@ class CheckLiveTriggers:
         # Check temperature variation. Get absolute value regardless of positive / negative value
         temp_diff = math.fabs(historical_data.temperature - previous_data_point.temperature)
 
-        if temp_diff > self.CONFIG.getFloatConfig("Trigger", "temperatureVariation"):
+        if temp_diff > self.CONFIG.get_float_config("Trigger", "temperatureVariation"):
             _LOGGER.info("Temperature trigger condition met with " + str(temp_diff) + "c delta")
             return True
 

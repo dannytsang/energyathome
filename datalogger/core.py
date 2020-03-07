@@ -36,29 +36,21 @@ from offline_handler import BackupRestore
 
 # Configuration Manager
 CONFIG = ConfigManager()
-
 # Instantiate _LOGGER
 _LOGGER = logging.getLogger(__name__)
-
 # Instantiate DB
 DATABASE = MySQL()
-
 SCHEDULER = None
-
 # Data validation
 VALIDATOR = None
-
 # Data trigger
 TRIGGER = None
-
 # Serial Devices
 DEVICE = None
-
 # Offline handler
 OFFLINE = None
-
 # Offline Mode
-OFFLINEMODE = False
+OFFLINE_MODE = False
 
 
 def run():
@@ -70,81 +62,81 @@ def run():
     global TRIGGER
     global DEVICE
     global OFFLINE
-    global OFFLINEMODE
+    global OFFLINE_MODE
 
     # Read data from USB/Serial
     data = DEVICE.read()
     # Instantiate parser
-    xmlParser = Parser()
+    xml_parser = Parser()
     # Parse xml data from device
-    hData = xmlParser.parse_xml(data)
+    h_data = xml_parser.parse_xml(data)
     # valid data
-    hDataValid = True
+    h_data_valid = True
 
-    if hData is not None:
+    if h_data is not None:
         # Check time override
-        if CONFIG.getBooleanConfig("Application", "useSystemTime"):
+        if CONFIG.get_boolean_config("Application", "useSystemTime"):
             # Overriding device time with system date time
-            hData.time = datetime.now()
+            h_data.time = datetime.now()
         else:
             try:
                 # Parse time from device pre-pending system date
-                tempDate = date.today().isoformat() + " " + hData.time
-                hData.time = datetime.strptime(tempDate, "%Y-%m-%e %H:%M:%S")
+                temp_date = date.today().isoformat() + " " + h_data.time
+                h_data.time = datetime.strptime(temp_date, "%Y-%m-%e %H:%M:%S")
             except ValueError:
                 # Unable to parse time from device
-                _LOGGER.error("Error parsing time from device '" + hData.time + "'")
+                _LOGGER.error("Error parsing time from device '" + h_data.time + "'")
 
         # If error checking is enabled
-        if VALIDATOR is not None and CONFIG.getBooleanConfig("Tolerence", "enabled"):
+        if VALIDATOR is not None and CONFIG.get_boolean_config("Tolerence", "enabled"):
             try:
                 # Validate data
-                validatedData = VALIDATOR.validate_data(hData)
+                validated_data = VALIDATOR.validate_data(h_data)
 
                 # Retrieve validation result
-                hDataValid = validatedData[0]
+                h_data_valid = validated_data[0]
                 # If data is valid, retrieve the new valid data. The object may have
                 # been cleansed e.g some channels may not meet validation parameters but
                 # other channels might in the reading
-                if hDataValid is True:
-                    hData = validatedData[1]
+                if h_data_valid is True:
+                    h_data = validated_data[1]
 
             except ConnectionException as ce:
                 # Gracefully shutdown if it was unable to validate the data due to
                 # database connection
-                if CONFIG.getBooleanConfig("Application", "enableOffline"):
+                if CONFIG.get_boolean_config("Application", "enableOffline"):
                     # Set mode to offline
-                    OFFLINEMODE = True
-                    OFFLINE.backup(hData)
+                    OFFLINE_MODE = True
+                    OFFLINE.backup(h_data)
                 else:
                     shutdown()
 
         # Only check trigger conditions if it's enabled, not in offline mode and
         # data is valid after tolerence check
-        if OFFLINEMODE is False and hDataValid and CONFIG.getBooleanConfig("Trigger", "enabled"):
+        if OFFLINE_MODE is False and h_data_valid and CONFIG.get_boolean_config("Trigger", "enabled"):
             # Check trigger conditions which return true or false if it's valid
             try:
-                hDataValid = TRIGGER.check_triggers(hData)
+                h_data_valid = TRIGGER.check_triggers(h_data)
             except ConnectionException as ce:
                 # Gracefully shutdown if it was unable to check triggers due to database connection
-                if CONFIG.getBooleanConfig("Application", "enableOffline"):
+                if CONFIG.get_boolean_config("Application", "enableOffline"):
                     # Set mode to offline
-                    OFFLINEMODE = True
-                    OFFLINE.backup(hData)
+                    OFFLINE_MODE = True
+                    OFFLINE.backup(h_data)
                 else:
                     shutdown()
 
         # Insert data if it passed all checks and mode is not offline
-        if OFFLINEMODE is False:
-            if hDataValid:
+        if OFFLINE_MODE is False:
+            if h_data_valid:
                 try:
-                    historical_data.insert_data(hData)
+                    historical_data.insert_data(h_data)
                 except ConnectionException as ce:
                     # Gracefully shutdown if it was unable to check triggers due to database connection
-                    if CONFIG.getBooleanConfig("Application", "enableOffline"):
+                    if CONFIG.get_boolean_config("Application", "enableOffline"):
                         # Set mode to offline
-                        OFFLINEMODE = True
-                        OFFLINE.backup(hData)
+                        OFFLINE_MODE = True
+                        OFFLINE.backup(h_data)
                     else:
                         shutdown()
             else:
@@ -170,15 +162,15 @@ def init():
     _LOGGER.info("Initialising")
 
     # Instantiate validation class if enabled
-    if CONFIG.getBooleanConfig("Tolerence", "enabled"):
+    if CONFIG.get_boolean_config("Tolerence", "enabled"):
         VALIDATOR = CheckLiveData()
 
     # Instantiate trigger class if enabled
-    if CONFIG.getBooleanConfig("Trigger", "enabled"):
+    if CONFIG.get_boolean_config("Trigger", "enabled"):
         TRIGGER = CheckLiveTriggers()
 
     # Instantiate offline class handler if enabled
-    if CONFIG.getBooleanConfig("Application", "enableOffline"):
+    if CONFIG.get_boolean_config("Application", "enableOffline"):
         OFFLINE = BackupRestore()
 
     # Connect to database
@@ -191,12 +183,12 @@ def init():
 
     # If offline backup is enabled insert any data stored in file.
     _LOGGER.debug("Checking offline setting")
-    if CONFIG.getBooleanConfig("Application", "enableOffline"):
+    if CONFIG.get_boolean_config("Application", "enableOffline"):
         _LOGGER.debug("Offline backup enabled")
         # Restore data
         try:
             OFFLINE.restore()
-        except:
+        except Exception as e:
             # Gracefully shutdown.
             shutdown()
 
@@ -227,7 +219,7 @@ def init():
 
     # Create new instance of scheduler
     _LOGGER.info("Checking scheduler setting")
-    if CONFIG.getBooleanConfig("Scheduler", "enabled"):
+    if CONFIG.get_boolean_config("Scheduler", "enabled"):
         _LOGGER.info("Scheduler enabled")
         # Import the module only if scheduler is enabled
         import scheduler
@@ -264,7 +256,7 @@ def shutdown():
         DATABASE.disconnect()
 
     # Stop scheduler
-    if CONFIG.getBooleanConfig("Scheduler", "enabled") and SCHEDULER is not None:
+    if CONFIG.get_boolean_config("Scheduler", "enabled") and SCHEDULER is not None:
         SCHEDULER.stop()
 
     # Exit program

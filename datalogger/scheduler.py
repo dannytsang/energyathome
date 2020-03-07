@@ -36,7 +36,7 @@ class JobChecker(threading.Thread):
         threading.Thread.__init__(self)
         self._finished = threading.Event()
         # Set delay interval in minutes
-        self._interval = self.CONFIG.getIntConfig("Scheduler", "checkInverval") * 60
+        self._interval = self.CONFIG.get_int_config("Scheduler", "checkInverval") * 60
 
     def setInterval(self, interval):
         """Set the number of seconds to sleep between tasks"""

@@ -50,7 +50,7 @@ class BackupRestore:
         # If true exit due to exception
         exit = False
         # Get file path from config
-        location = self.CONFIG.getConfig("Application", "offlineFile")
+        location = self.CONFIG.get_config("Application", "offlineFile")
         # Check if config is empty
         if len(location) == 0:
             # Use current directory
@@ -94,7 +94,7 @@ class BackupRestore:
                 # Get backup record
                 h_data = record
 
-                if self.VALIDATOR is not None and self.CONFIG.getBooleanConfig("Tolerence", "enabled"):
+                if self.VALIDATOR is not None and self.CONFIG.get_boolean_config("Tolerence", "enabled"):
                     try:
                         validatedData = self.VALIDATOR.validate_data(h_data)
                     except Exception as e:
@@ -104,7 +104,7 @@ class BackupRestore:
                     if h_data_valid is True:
                         h_data = validatedData[1]
 
-                if h_data_valid and self.CONFIG.getBooleanConfig("Trigger", "enabled"):
+                if h_data_valid and self.CONFIG.get_boolean_config("Trigger", "enabled"):
                     # Check trigger conditions which return true or false if it's valid
                     try:
                         h_data_valid = self.TRIGGER.check_triggers(h_data)
@@ -130,7 +130,7 @@ class BackupRestore:
         # List to store restored objects
         file_list = []
         # Get file path from config
-        location = self.CONFIG.getConfig("Application", "offlineFile")
+        location = self.CONFIG.get_config("Application", "offlineFile")
         # Check if config is empty
         if len(location) == 0:
             # Use current directory
@@ -160,7 +160,7 @@ class BackupRestore:
         success = False
 
         # Get file path from config
-        location = self.CONFIG.getConfig("Application", "offlineFile")
+        location = self.CONFIG.get_config("Application", "offlineFile")
         # Check if config is empty
         if len(location) == 0:
             # Use current directory

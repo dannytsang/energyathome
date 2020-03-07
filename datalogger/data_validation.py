@@ -43,7 +43,7 @@ class CheckLiveData:
         valid = True
         
         # Get maximum appliance Id value
-        max_app_id = self.CONFIG.getIntConfig("Tolerence", "maxApplianceId")
+        max_app_id = self.CONFIG.get_int_config("Tolerence", "maxApplianceId")
         
         try:
             # If max app id is greater than 0 then checking for app id is enabled
@@ -52,20 +52,20 @@ class CheckLiveData:
                     valid = False
             
             # Check device name matches in the config
-            device_names = self.CONFIG.getConfig("Tolerence", "allowedDeviceNames")
+            device_names = self.CONFIG.get_config("Tolerence", "allowedDeviceNames")
             # If device names are defined then perform a match
             if device_names is not None and device_names != "":
                 if self.check_device_name(historicalData) is False:
                     valid = False
             
-            if self.CONFIG.getBooleanConfig("Tolerence", "allowNewAppliances") is False:
+            if self.CONFIG.get_boolean_config("Tolerence", "allowNewAppliances") is False:
                 # If it returns true then it's a new appliance and should be ignored
                 if self.check_new_appliance(historicalData) is True:
                     valid = False
                     _LOGGER.info("Appliance ID " + str(historicalData.applianceId) + " was not stored due to allowNewAppliances = False")
                     
             # Check channel names
-            if self.CONFIG.getBooleanConfig("Tolerence", "allowBlankChannelNames") is False:
+            if self.CONFIG.get_boolean_config("Tolerence", "allowBlankChannelNames") is False:
                 test = self.check_channel_names(historicalData)
                 # If test returned None then it failed validation.
                 # Otherwise assign returned Historical Data because it may have changed some attributes
@@ -76,7 +76,7 @@ class CheckLiveData:
                     historicalData = test
             
             # Check channels
-            if self.CONFIG.getBooleanConfig("Tolerence", "check_channels") is True and historicalData.applianceId is not None:
+            if self.CONFIG.get_boolean_config("Tolerence", "check_channels") is True and historicalData.applianceId is not None:
                 test = self.check_channels(historicalData)
                 # If test returned None then it failed validation.
                 # Otherwise assign returned Historical Data because it may have changed some attributes
@@ -93,7 +93,7 @@ class CheckLiveData:
         """Checks if appliance ID falls within a set range"""
         
         # Get maximum appliance Id value
-        max_app_id = self.CONFIG.getIntConfig("Tolerence", "maxApplianceId")
+        max_app_id = self.CONFIG.get_int_config("Tolerence", "maxApplianceId")
         
         try:
             # Check if appliance number exceeds maximum
@@ -118,13 +118,13 @@ class CheckLiveData:
         """Checks device name is in specified list"""
         
         # Get device names from config
-        device_names = self.CONFIG.getConfig("Tolerence", "allowedDeviceNames")
+        device_names = self.CONFIG.get_config("Tolerence", "allowedDeviceNames")
         
         # Convert string of device names into a list
         device_name_split = device_names.split(",")
         
         # Get case sensitive match from config
-        case_sensitive_match = self.CONFIG.getConfig("Tolerence", "caseSensitiveDeviceNames")
+        case_sensitive_match = self.CONFIG.get_config("Tolerence", "caseSensitiveDeviceNames")
         
         match = False
         
@@ -168,7 +168,7 @@ class CheckLiveData:
         """Checks channels are within specified list"""
         
         # Get device containing appliances and related channels
-        allowed_channels = self.CONFIG.getConfigCategory("device_" + historicalData.name)
+        allowed_channels = self.CONFIG.get_config_category("device_" + historicalData.name)
         
         if allowed_channels is not None:
             # Store the channel (keys) which are invalid to remove safely rather than iterating from a mutable dictionary

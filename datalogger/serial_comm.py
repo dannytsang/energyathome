@@ -50,11 +50,11 @@ class DeviceManager():
     def open(self):
         """Open connection to USB to serial port"""
 
-        self.COMM.port = self.CONFIG.getConfig("SerialConnection", "serialport")
-        self.COMM.baudrate = self.CONFIG.getIntConfig("SerialConnection", "baudrate")
-        self.COMM.parity = self.CONFIG.getConfig("SerialConnection", "parity")
+        self.COMM.port = self.CONFIG.get_config("SerialConnection", "serialport")
+        self.COMM.baudrate = self.CONFIG.get_int_config("SerialConnection", "baudrate")
+        self.COMM.parity = self.CONFIG.get_config("SerialConnection", "parity")
         self.COMM.timeout = None
-        self.COMM.bytesize = self.CONFIG.getIntConfig("SerialConnection", "bytesize")
+        self.COMM.bytesize = self.CONFIG.get_int_config("SerialConnection", "bytesize")
 
         if not self.COMM.isOpen():
             _LOGGER.info('Establishing connection to device')
@@ -68,7 +68,7 @@ class DeviceManager():
     def close(self):
         """Close connection to USB to Serial port"""
 
-        if (self.COMM.isOpen):
+        if self.COMM.isOpen:
             _LOGGER.info('Closing device connection')
             self.COMM.close()
 

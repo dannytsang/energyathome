@@ -48,16 +48,16 @@ class MySQL(object):
         # Configuration Manager
         self.CONFIG = ConfigManager()
         # Instantiate logging
-        logging.config.fileConfig(self.CONFIG.getConfigFilePath())
+        logging.config.fileConfig(self.CONFIG.get_config_file_path())
         self._LOGGER = logging.getLogger("energyathome.datalogger.database.mysql")
         # Connection variable
         self.CONNECTION = None
 
         # Number of transaction retries before failing
-        self.RETRIES = self.CONFIG.getIntConfig("Database", "retries")
+        self.RETRIES = self.CONFIG.get_int_config("Database", "retries")
 
         # Number in seconds to wait before re-attempting failed transaction
-        self.WAIT = self.CONFIG.getFloatConfig("Database", "wait")
+        self.WAIT = self.CONFIG.get_float_config("Database", "wait")
 
         sys.path.append("..")
         
@@ -79,12 +79,12 @@ class MySQL(object):
         
         attempts = 1
         
-        database_settings = self.CONFIG.getConfigCategory("Database")
+        database_settings = self.CONFIG.get_config_category("Database")
         
         if self._LOGGER is None:
             self.__init__()
         
-        while attempts <= self.CONFIG.getIntConfig("Database", "retries") and self.CONNECTION is None:
+        while attempts <= self.CONFIG.get_int_config("Database", "retries") and self.CONNECTION is None:
             
             try:
                 self._LOGGER.info("Attempting DB connection")
