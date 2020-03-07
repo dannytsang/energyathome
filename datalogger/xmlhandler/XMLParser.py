@@ -20,142 +20,143 @@
 
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
+import logging
 from xml.dom import minidom, Node
 from xml.parsers.expat import ExpatError
 
-import debug
 from historical_data import *
 
+
 class Parser:
-    
+
     def __init__(self):
-        # Instantiate Logger
-        self.LOGGER = debug.getLogger("energyathome.datalogger.xmlparser")
+        # Instantiate _LOGGER
+        self._LOGGER = logging.getLogger(__name__)
 
     # Used for debugging with example files. May be used in the future
-    def parseXMLFile(self, xmlFile):
-        '''Parse XML file and return HistoricalData object.
-        Expects file path in full or relative to this file.'''
+    def parse_xml_file(self, xml_file):
+        """Parse XML file and return HistoricalData object.
+        Expects file path in full or relative to this file."""
 
         try:
-            xmlDoc = minidom.parse(xmlFile)
-            self.LOGGER.info("XML parsed successfully")
-            
-            return self.processData(xmlDoc)
-        
+            xml_doc = minidom.parse(xml_file)
+            self._LOGGER.info("XML parsed successfully")
+
+            return self.process_data(xml_doc)
+
         except ExpatError:
-            self.LOGGER.error("XML parse error with xml : " + xmlFile)
-            
+            self._LOGGER.error("XML parse error with xml : " + xml_file)
+
             return None
 
     # Parse XML string and return HistoricalData class
-    def parseXML(self, xmlString):
-        '''Parse XML string and return HistoricalData object.'''
+    def parse_xml(self, xml_string):
+        """Parse XML string and return HistoricalData object."""
 
         try:
-            xmlDoc = minidom.parseString(xmlString)
-            self.LOGGER.info("XML parsed successfully")
-            
-            return self.processData(xmlDoc)
-        
+            xml_doc = minidom.parseString(xml_string)
+            self._LOGGER.info("XML parsed successfully")
+
+            return self.process_data(xml_doc)
+
         except ExpatError:
-            self.LOGGER.error("XML parse error with xml string: " + xmlString)
-            
+            self._LOGGER.error("XML parse error with xml string: " + xml_string)
+
             return None
-        
+
     # Check which type of XML was received
-    def processData(self, xmlDoc):
-        '''Determine how to handle the XML data that was received'''
+    def process_data(self, xml_doc):
+        """Determine how to handle the XML data that was received"""
 
-        isCurrentData = self.isCurrentXMLData(xmlDoc)
+        is_current_data = self.is_current_xml_data(xml_doc)
 
-        if bool(isCurrentData):
-            return self.getCurrentXMLData(xmlDoc)
-        
+        if bool(is_current_data):
+            return self.get_current_xml_data(xml_doc)
+
         else:
             return None
 
     # Checks if parsed XML is current data or historical data
-    def isCurrentXMLData(self, xmlDoc):
-        '''Checks if the xml data is current or historical.
+    def is_current_xml_data(self, xml_doc):
+        """Checks if the xml data is current or historical.
         CurrentCost CC128 sends current power and temperature data every 6 secs.
         Every 1 minute past the hour e.g 5:01 it sends historical data from the
         last hour which contains different xml nodes.
-        Returns True if it's current data and false if it's historical.'''
+        Returns True if it's current data and false if it's historical."""
 
-        if xmlDoc is not None:
+        if xml_doc is not None:
             # Find element which only appears in historical XML data
-            check = xmlDoc.getElementsByTagName('hist')
+            check = xml_doc.getElementsByTagName('hist')
 
             if check.length > 0:
-                self.LOGGER.info('Historical XML Data Found')
-                
+                self._LOGGER.info('Historical XML Data Found')
+
                 return False
             else:
-                self.LOGGER.info('Current XML Data Found')
-                
+                self._LOGGER.info('Current XML Data Found')
+
                 return True
         else:
             return None
-        
+
     # Create HistoricalData object from parse XML document
-    def getCurrentXMLData(self, xmlDoc):
-        '''Creates and populates HistoricalData from xml data.'''
-        
+    def get_current_xml_data(self, xml_doc):
+        """Creates and populates HistoricalData from xml data."""
+
         # Instantiate HistoricalData object.
         data = HistoricalData()
-        
-        if xmlDoc is not None:
-            for msgNode in xmlDoc.getElementsByTagName('msg'):
-                #print msgNode.toxml()
-                dataNode = msgNode.childNodes
+
+        if xml_doc is not None:
+            for msgNode in xml_doc.getElementsByTagName('msg'):
+                # print msgNode.toxml()
+                data_node = msgNode.childNodes
                 # Populate object with data under the parent node
-                for i in range(0, dataNode.length):
+                for i in range(0, data_node.length):
                     try:
-                        if dataNode[i].nodeName == 'src':
-                            self.LOGGER.info(str(i) + ': name=' + dataNode[i].firstChild.nodeValue)
-                            data.name = dataNode[i].firstChild.nodeValue
-                        elif dataNode[i].nodeName == 'dsb':
-                            self.LOGGER.info(str(i) + ': dsb=' + dataNode[i].firstChild.nodeValue)
-                            data.dsb = int(dataNode[i].firstChild.nodeValue)
-                        elif dataNode[i].nodeName == 'id':
-                            self.LOGGER.info(str(i) + ': appliance id=' + dataNode[i].firstChild.nodeValue)
-                            data.channel_frequency = int(dataNode[i].firstChild.nodeValue)
-                        elif dataNode[i].nodeName == 'sensor':
-                            self.LOGGER.info(str(i) + ': sensor=' + dataNode[i].firstChild.nodeValue)
-                            data.applianceId = dataNode[i].firstChild.nodeValue
-                        elif dataNode[i].nodeName == 'type':
-                            self.LOGGER.info(str(i) + ': type=' + dataNode[i].firstChild.nodeValue)
-                            data.sensorType = int(dataNode[i].firstChild.nodeValue)
-                        elif dataNode[i].nodeName == 'time':
-                            self.LOGGER.info(str(i) + ': time=' + str(dataNode[i].firstChild.nodeValue))
-                            data.time = dataNode[i].firstChild.nodeValue
-                        elif dataNode[i].nodeName == 'tmpr':
-                            self.LOGGER.info(str(i) + ': tmpr=' + dataNode[i].firstChild.nodeValue)
-                            data.temperature = float(dataNode[i].firstChild.nodeValue)
+                        if data_node[i].nodeName == 'src':
+                            self._LOGGER.info(str(i) + ': name=' + data_node[i].firstChild.nodeValue)
+                            data.name = data_node[i].firstChild.nodeValue
+                        elif data_node[i].nodeName == 'dsb':
+                            self._LOGGER.info(str(i) + ': dsb=' + data_node[i].firstChild.nodeValue)
+                            data.dsb = int(data_node[i].firstChild.nodeValue)
+                        elif data_node[i].nodeName == 'id':
+                            self._LOGGER.info(str(i) + ': appliance id=' + data_node[i].firstChild.nodeValue)
+                            data.channel_frequency = int(data_node[i].firstChild.nodeValue)
+                        elif data_node[i].nodeName == 'sensor':
+                            self._LOGGER.info(str(i) + ': sensor=' + data_node[i].firstChild.nodeValue)
+                            data.applianceId = data_node[i].firstChild.nodeValue
+                        elif data_node[i].nodeName == 'type':
+                            self._LOGGER.info(str(i) + ': type=' + data_node[i].firstChild.nodeValue)
+                            data.sensorType = int(data_node[i].firstChild.nodeValue)
+                        elif data_node[i].nodeName == 'time':
+                            self._LOGGER.info(str(i) + ': time=' + str(data_node[i].firstChild.nodeValue))
+                            data.time = data_node[i].firstChild.nodeValue
+                        elif data_node[i].nodeName == 'tmpr':
+                            self._LOGGER.info(str(i) + ': tmpr=' + data_node[i].firstChild.nodeValue)
+                            data.temperature = float(data_node[i].firstChild.nodeValue)
                         # Match any channel
-                        elif dataNode[i].nodeName[:2] == 'ch':
-                            self.LOGGER.info(str(i) + ': ch' + dataNode[i].nodeName[2:] + '=' + self.getXMLChannel(dataNode[i].childNodes))
-                            data.energy[dataNode[i].nodeName] = int(self.getXMLChannel(dataNode[i].childNodes))
-                    
+                        elif data_node[i].nodeName[:2] == 'ch':
+                            self._LOGGER.info(str(i) + ': ch' + data_node[i].nodeName[2:] + '=' + self.get_xml_channel(
+                                data_node[i].childNodes))
+                            data.energy[data_node[i].nodeName] = int(self.get_xml_channel(data_node[i].childNodes))
+
                     except AttributeError:
-                        self.LOGGER.error('Skipped due to data error: ' + str(dataNode[i].nodeName))
-                    
+                        self._LOGGER.error('Skipped due to data error: ' + str(data_node[i].nodeName))
+
                     except ValueError:
-                        self.LOGGER.error('Skipped due to data error: ' + str(dataNode[i].nodeName))
-        
+                        self._LOGGER.error('Skipped due to data error: ' + str(data_node[i].nodeName))
+
         return data
 
     # Currently unused
-    def getXMLChannel(self, channelNode):
-        
-        for i in range(0, channelNode.length):
+    def get_xml_channel(self, channel_node):
+
+        for i in range(0, channel_node.length):
             try:
-                if channelNode[i].nodeName == 'watts':
-                    return channelNode[i].firstChild.nodeValue
-                
+                if channel_node[i].nodeName == 'watts':
+                    return channel_node[i].firstChild.nodeValue
+
             except AttributeError:
-                self.LOGGER.error('skipped: ' + str(channelNode[i].nodeName))
+                self._LOGGER.error('skipped: ' + str(channel_node[i].nodeName))
         # Return node value in watts
         return 0
-    

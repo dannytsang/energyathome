@@ -134,7 +134,7 @@ class MySQL(object):
         return False
 
     # Execute query with no return results
-    def executeNonUpdate(self, statement, values):
+    def execute_non_update(self, statement, values):
         """Execute SQL with no return results.
         Accepts an SQL statement with %s parameters which will be replaced with
         the values parameter. If no %s is used, values should be set to None.
@@ -188,7 +188,7 @@ class MySQL(object):
         return id
 
     # Execute query and return results
-    def executeUpdate(self, statement, values):
+    def execute_update(self, statement, values):
         """Execute query and return all results."""
         
         attempts = 1
@@ -239,7 +239,7 @@ class MySQL(object):
         return None
 
     # Execute query and return one result
-    def executeOneUpdate(self, statement, values):
+    def execute_one_update(self, statement, values):
         """Execute SQL and returns one result.
         Accepts an SQL statement with %s parameters which will be replaced with
         the values parameter. If no %s is used, values should be set to None.

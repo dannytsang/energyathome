@@ -37,7 +37,7 @@ class CheckLiveTriggers:
         # Instantiate config manager
         self.CONFIG = ConfigManager()
 
-    def checkTriggers(self, historicalData):
+    def check_triggers(self, historicalData):
         """Check if data received meets any one trigger conditions.
         Returns true if it's met"""
 
@@ -45,37 +45,37 @@ class CheckLiveTriggers:
 
         # Get last recorded data point. Used for trigger information
         try:
-            previousDataPoint = historical_data.getLastHistoricalData(historicalData)
+            previous_data_point = historical_data.get_last_historical_data(historicalData)
 
         except ConnectionException as ce:
             raise ce
 
         # Check if there was data in DB
-        if previousDataPoint is not None:
+        if previous_data_point is not None:
             try:
                 # Get all channel data
                 channel = ""
-                for key, value in previousDataPoint.energy.iteritems():
+                for key, value in previous_data_point.energy.iteritems():
                     channel += key + "=" + str(value) + "w "
 
-                _LOGGER.info("Last data point for " + previousDataPoint.name + \
-                             " app_id=" + str(previousDataPoint.applianceId) + " type=" + \
-                             str(previousDataPoint.sensorType) + " " + "at " + \
-                             str(previousDataPoint.time) + " was " + channel + \
-                             str(previousDataPoint.temperature) + "c")
+                _LOGGER.info("Last data point for " + previous_data_point.name + \
+                             " app_id=" + str(previous_data_point.applianceId) + " type=" + \
+                             str(previous_data_point.sensorType) + " " + "at " + \
+                             str(previous_data_point.time) + " was " + channel + \
+                             str(previous_data_point.temperature) + "c")
 
                 # Check timeout
-                timeout = self.checkTimeTrigger(previousDataPoint)
+                timeout = self.check_time_trigger(previous_data_point)
                 if timeout is True:
                     trigger = True
 
                 # Check energy variation
-                energy = self.checkEnergyTrigger(historicalData, previousDataPoint)
+                energy = self.check_energy_trigger(historicalData, previous_data_point)
                 if energy is True:
                     trigger = True
 
                 # Check temperature variation
-                temp = self.checkTemperatureTrigger(historicalData, previousDataPoint)
+                temp = self.check_temperature_trigger(historicalData, previous_data_point)
                 if temp is True:
                     trigger = True
 
@@ -90,36 +90,35 @@ class CheckLiveTriggers:
                          " type=" + str(historicalData.sensorType))
             trigger = True
 
-        # Historial data existed but no conditions were met.
+        # Historical data existed but no conditions were met.
         return trigger
 
-    def checkTimeTrigger(self, previousDataPoint):
+    def check_time_trigger(self, previous_data_point):
         """Returns true if time from last datapoint exceeded the maximum"""
 
         # Check timeout trigger condition first as it's most common condition to
         # trigger a save point. Ignoring device time so using system time
-        if (datetime.today() - previousDataPoint.time) >= timedelta(
+        if (datetime.today() - previous_data_point.time) >= timedelta(
                 seconds=self.CONFIG.getIntConfig("Trigger", "timeout")):
             _LOGGER.info("Timeout trigger condition met with " + \
-                         str(datetime.today() - previousDataPoint.time) + " delta")
+                         str(datetime.today() - previous_data_point.time) + " delta")
             return True
 
         else:
             return False
 
-    def checkEnergyTrigger(self, historicalData, previousDataPoint):
+    def check_energy_trigger(self, historical_data, previous_data_point):
         """Returns true if the energy difference from the previous value is exceeded"""
 
-        # Check energy variation. Get absolute value reguardless of positive / negative value
+        # Check energy variation. Get absolute value regardless of positive / negative value
         # Must loop through each channel
-        for key, value in historicalData.energy.iteritems():
-            if previousDataPoint.energy.get(key, None) is not None:
+        for key, value in historical_data.energy.iteritems():
+            if previous_data_point.energy.get(key, None) is not None:
                 # Calculate the difference from last data point and the new one
-                energyDiff = math.fabs(value) - previousDataPoint.energy[key]
+                energyDiff = math.fabs(value) - previous_data_point.energy[key]
 
                 if energyDiff >= self.CONFIG.getFloatConfig("Trigger", "energyvariation"):
-                    _LOGGER.info("Energy trigger condition met with " + str(key) + " " + \
-                                 str(energyDiff) + "w delta")
+                    _LOGGER.info("Energy trigger condition met with " + str(key) + " " + str(energyDiff) + "w delta")
                     return True
 
             else:
@@ -129,15 +128,14 @@ class CheckLiveTriggers:
         # Deliberate fall through to return false
         return False
 
-    def checkTemperatureTrigger(self, historicalData, previousDataPoint):
+    def check_temperature_trigger(self, historical_data, previous_data_point):
         """Returns true if the temperature difference from the previous value is exceeded"""
 
-        # Check temperature variation. Get absolute value reguardless of positive / negative value
-        tempDiff = math.fabs(historicalData.temperature - previousDataPoint.temperature)
+        # Check temperature variation. Get absolute value regardless of positive / negative value
+        temp_diff = math.fabs(historical_data.temperature - previous_data_point.temperature)
 
-        if tempDiff > self.CONFIG.getFloatConfig("Trigger", "temperatureVariation"):
-            _LOGGER.info("Temperature trigger condition met with " + \
-                         str(tempDiff) + "c delta")
+        if temp_diff > self.CONFIG.getFloatConfig("Trigger", "temperatureVariation"):
+            _LOGGER.info("Temperature trigger condition met with " + str(temp_diff) + "c delta")
             return True
 
         else:

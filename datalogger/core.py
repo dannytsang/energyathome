@@ -77,7 +77,7 @@ def run():
     # Instantiate parser
     xmlParser = Parser()
     # Parse xml data from device
-    hData = xmlParser.parseXML(data)
+    hData = xmlParser.parse_xml(data)
     # valid data
     hDataValid = True
 
@@ -99,7 +99,7 @@ def run():
         if VALIDATOR is not None and CONFIG.getBooleanConfig("Tolerence", "enabled"):
             try:
                 # Validate data
-                validatedData = VALIDATOR.validateData(hData)
+                validatedData = VALIDATOR.validate_data(hData)
 
                 # Retrieve validation result
                 hDataValid = validatedData[0]
@@ -124,7 +124,7 @@ def run():
         if OFFLINEMODE is False and hDataValid and CONFIG.getBooleanConfig("Trigger", "enabled"):
             # Check trigger conditions which return true or false if it's valid
             try:
-                hDataValid = TRIGGER.checkTriggers(hData)
+                hDataValid = TRIGGER.check_triggers(hData)
             except ConnectionException as ce:
                 # Gracefully shutdown if it was unable to check triggers due to database connection
                 if CONFIG.getBooleanConfig("Application", "enableOffline"):
@@ -138,7 +138,7 @@ def run():
         if OFFLINEMODE is False:
             if hDataValid:
                 try:
-                    historical_data.insertData(hData)
+                    historical_data.insert_data(hData)
                 except ConnectionException as ce:
                     # Gracefully shutdown if it was unable to check triggers due to database connection
                     if CONFIG.getBooleanConfig("Application", "enableOffline"):
@@ -208,7 +208,7 @@ def init():
           "CASE c.channel WHEN 'temp' THEN 'C' ELSE 'W' END FROM channel c"
     _LOGGER.debug(sql)
     try:
-        DATABASE.executeUpdate(sql, None)
+        DATABASE.execute_update(sql, None)
     except ConnectionException:
         _LOGGER.critical("Unable to connect to database. Exiting...")
         sys.exit(1)
@@ -220,7 +220,7 @@ def init():
           "FROM channel c WHERE c.channel_id IN (SELECT DISTINCT h.channel_id FROM historical_data h)"
     _LOGGER.debug(sql)
     try:
-        DATABASE.executeUpdate(sql, None)
+        DATABASE.execute_update(sql, None)
     except ConnectionException:
         _LOGGER.critical("Database error. Exiting...")
         sys.exit(1)

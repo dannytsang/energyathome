@@ -54,7 +54,7 @@ class HistoricalData:
 
 
 # Insert a new device into DB
-def insertData(historicalData):
+def insert_data(historicalData):
     """Insert historical data into the database with the current data held in
     this class but ignores the datetime field and uses current server time"""
 
@@ -62,12 +62,12 @@ def insertData(historicalData):
 
     if historicalData is not None:
         # Get device id
-        deviceId = getDeviceId(historicalData.name, historicalData.applianceId, historicalData.sensorType)
+        deviceId = get_device_id(historicalData.name, historicalData.applianceId, historicalData.sensorType)
 
         # If device / channel does not exist
         if deviceId is None:
             # Create new device
-            deviceId = createDevice(historicalData)
+            deviceId = create_device(historicalData)
         else:
             # Need to get device ID from tuple
             deviceId = deviceId[0]
@@ -76,10 +76,10 @@ def insertData(historicalData):
             # Interate all channels and store the values
             for key, value in historicalData.energy.iteritems():
                 # Get channel ID
-                channelId = getChannelId(deviceId, key)
+                channelId = get_channel_id(deviceId, key)
 
                 if channelId is None:
-                    channelId = createChannel(deviceId, key)
+                    channelId = create_channel(deviceId, key)
 
                 # Build SQL statement to store data
                 sql = "INSERT INTO historical_data (date_time, channel_id, " + \
@@ -90,14 +90,14 @@ def insertData(historicalData):
                 values = [historicalData.time.isoformat(' '), channelId, value, "W"]
                 _LOGGER.debug(values)
 
-                DATABASE.executeNonUpdate(sql, values)
+                DATABASE.execute_non_update(sql, values)
 
             # Insert temperature
             # Get channel ID
-            channelId = getChannelId(None, "temp")
+            channelId = get_channel_id(None, "temp")
 
             if channelId is None:
-                channelId = createChannel(deviceId, "temp")
+                channelId = create_channel(deviceId, "temp")
 
             # Build SQL statement to store data
             sql = "INSERT INTO historical_data (date_time, channel_id, " + \
@@ -108,7 +108,7 @@ def insertData(historicalData):
             values = [historicalData.time.isoformat(' '), channelId, historicalData.temperature, "C"]
             _LOGGER.debug(values)
 
-            DATABASE.executeNonUpdate(sql, values)
+            DATABASE.execute_non_update(sql, values)
 
             _LOGGER.info("data stored successfully")
         else:
@@ -117,7 +117,7 @@ def insertData(historicalData):
         _LOGGER.info("No data to store")
 
 
-def createDevice(historicalData):
+def create_device(historicalData):
     """Creates a new device record"""
 
     global _LOGGER
@@ -135,10 +135,10 @@ def createDevice(historicalData):
     values = [historicalData.name, historicalData.applianceId, historicalData.sensorType]
     _LOGGER.debug(values)
 
-    return DATABASE.executeNonUpdate(sql, values)
+    return DATABASE.execute_non_update(sql, values)
 
 
-def createChannel(deviceId, channel):
+def create_channel(deviceId, channel):
     """Creates new channel record"""
 
     global _LOGGER
@@ -154,10 +154,10 @@ def createChannel(deviceId, channel):
     values = [deviceId, channel]
     _LOGGER.debug(values)
 
-    return DATABASE.executeNonUpdate(sql, values)
+    return DATABASE.execute_non_update(sql, values)
 
 
-def getDeviceId(name, applianceId, sensorType):
+def get_device_id(name, applianceId, sensorType):
     """Retrieves the Device ID form the database"""
 
     global _LOGGER
@@ -170,10 +170,10 @@ def getDeviceId(name, applianceId, sensorType):
     values = [name, applianceId, sensorType]
     _LOGGER.debug(values)
 
-    return DATABASE.executeOneUpdate(sql, values)
+    return DATABASE.execute_one_update(sql, values)
 
 
-def getChannelId(deviceId, channel):
+def get_channel_id(deviceId, channel):
     """Retrieves the channel ID from the database"""
 
     global _LOGGER
@@ -190,7 +190,7 @@ def getChannelId(deviceId, channel):
     _LOGGER.debug(sql)
     _LOGGER.debug(values)
 
-    channelId = DATABASE.executeOneUpdate(sql, values)
+    channelId = DATABASE.execute_one_update(sql, values)
 
     if channelId is not None:
         return channelId[0]
@@ -198,7 +198,7 @@ def getChannelId(deviceId, channel):
         return None
 
 
-def getLastHistoricalData(historicalData):
+def get_last_historical_data(historicalData):
     """Retrieve the last data saved for particular device, application id, sensor type.
     All conditions must match in order to get last data point back.
     Expects a HistoricalData object with those values populated and will return
@@ -249,7 +249,7 @@ def getLastHistoricalData(historicalData):
         _LOGGER.debug(values)
 
         # Execute query and store results
-        results = DATABASE.executeUpdate(sql, values)
+        results = DATABASE.execute_update(sql, values)
 
         # Set the time to the first record (the ealiest date in results)
         # Only if there is a previous record
@@ -270,7 +270,7 @@ def getLastHistoricalData(historicalData):
                   "(SELECT h2.date_time FROM historical_data h2 WHERE h2.channel_id = c.channel_id ORDER BY h2.date_time desc LIMIT 1) LIMIT 1"
             _LOGGER.debug(sql)
 
-            results = DATABASE.executeOneUpdate(sql, None)
+            results = DATABASE.execute_one_update(sql, None)
 
             if results is not None:
                 lastHistoricalData.temperature = float(results[0])

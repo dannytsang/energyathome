@@ -24,7 +24,7 @@ import os
 import core
 import logging
 
-import cPickle as pickle
+import pickle
 
 import historical_data
 from config.Config import ConfigManager
@@ -44,7 +44,7 @@ class BackupRestore:
         # Data trigger class
         self.TRIGGER = CheckLiveTriggers()
 
-    def backup(self, historicalData):
+    def backup(self, historical_data):
         """Writes historical data to file"""
 
         # If true exit due to exception
@@ -62,9 +62,9 @@ class BackupRestore:
             path = file(location, "a")
 
             # Ensure object has data
-            if historicalData is not None:
-                _LOGGER.info("Writing data to file:" + str(historicalData.__dict__))
-                pickle.dump(historicalData, path)
+            if historical_data is not None:
+                _LOGGER.info("Writing data to file:" + str(historical_data.__dict__))
+                pickle.dump(historical_data, path)
         except IOError:
             # Debug.writeOut("Unable to write to backup file: '" + location + "'")
             # No point running program if it's unable to write to file
@@ -83,52 +83,52 @@ class BackupRestore:
     def restore(self):
         """Starts the restore process from a file."""
 
-        backup = self.restoreFromFile()
-        recordCount = len(backup)
+        backup = self.restore_from_file()
+        record_count = len(backup)
 
-        if (recordCount > 0):
-            _LOGGER.info(str(recordCount) + " record(s) found. Saving to DB")
+        if record_count > 0:
+            _LOGGER.info(str(record_count) + " record(s) found. Saving to DB")
             for record in backup:
                 # Set data as valid by default
-                hDataValid = True
+                h_data_valid = True
                 # Get backup record
-                hData = record
+                h_data = record
 
                 if self.VALIDATOR is not None and self.CONFIG.getBooleanConfig("Tolerence", "enabled"):
                     try:
-                        validatedData = self.VALIDATOR.validateData(hData)
+                        validatedData = self.VALIDATOR.validate_data(h_data)
                     except Exception as e:
                         raise e
 
-                    hDataValid = validatedData[0]
-                    if hDataValid is True:
-                        hData = validatedData[1]
+                    h_data_valid = validatedData[0]
+                    if h_data_valid is True:
+                        h_data = validatedData[1]
 
-                if hDataValid and self.CONFIG.getBooleanConfig("Trigger", "enabled"):
+                if h_data_valid and self.CONFIG.getBooleanConfig("Trigger", "enabled"):
                     # Check trigger conditions which return true or false if it's valid
                     try:
-                        hDataValid = self.TRIGGER.checkTriggers(hData)
+                        h_data_valid = self.TRIGGER.check_triggers(h_data)
                     except Exception as e:
                         raise e
 
                 # Insert the first element in list and remove it
-                if hDataValid:
+                if h_data_valid:
                     _LOGGER.info("Inserting: " + str(record.__dict__))
-                    # HistoricalData.insertData(record)
-                    historical_data.insertData(hData)
+                    # HistoricalData.insert_data(record)
+                    historical_data.insert_data(h_data)
                 else:
                     _LOGGER.info("Skipped backup record")
 
             # Remove backup file to prevent duplicate data from being restored.
             _LOGGER.info("Restore from backup complete.")
             _LOGGER.info("Removing backup file.")
-            _LOGGER.info("File deleted? " + str(self.deleteBackupFile()))
+            _LOGGER.info("File deleted? " + str(self.delete_backup_file()))
 
-    def restoreFromFile(self):
+    def restore_from_file(self):
         """Reads a file and returns an array of objects."""
 
         # List to store restored objects
-        list = []
+        file_list = []
         # Get file path from config
         location = self.CONFIG.getConfig("Application", "offlineFile")
         # Check if config is empty
@@ -143,7 +143,7 @@ class BackupRestore:
             # Read file till end of file
             try:
                 while True:
-                    list.append(pickle.load(path))
+                    file_list.append(pickle.load(path))
             except EOFError:
                 # Ignore end of file error
                 pass
@@ -151,10 +151,10 @@ class BackupRestore:
                 # Close file
                 path.close()
 
-        _LOGGER.info("Found " + str(len(list)) + " record(s) in '" + location + "'")
-        return list
+        _LOGGER.info("Found " + str(len(file_list)) + " record(s) in '" + location + "'")
+        return file_list
 
-    def deleteBackupFile(self):
+    def delete_backup_file(self):
         """Removed backup file if it exists."""
 
         success = False
