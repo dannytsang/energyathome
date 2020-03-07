@@ -23,14 +23,17 @@ __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 import time, sys, os
 import logging, logging.config
 
-import MySQLdb
+import pymysql
 
 from config.Config import ConfigManager
 from DatabaseException import ConnectionException
 
+
 class MySQL(object):
     
     INSTANCE = None
+    # Instantiate self._LOGGER
+    _LOGGER = logging.getLogger(__name__)
     
     def __new__(cls, *args, **kwargs):
         if not cls.INSTANCE:
@@ -40,13 +43,13 @@ class MySQL(object):
         return cls.INSTANCE
 
     def __init__(self):
-        '''Check all global variables have been initialized'''
+        """Check all global variables have been initialized"""
         
         # Configuration Manager
         self.CONFIG = ConfigManager()
         # Instantiate logging
         logging.config.fileConfig(self.CONFIG.getConfigFilePath())
-        self.LOGGER = logging.getLogger("energyathome.datalogger.database.mysql")
+        self._LOGGER = logging.getLogger("energyathome.datalogger.database.mysql")
         # Connection variable
         self.CONNECTION = None
 
@@ -59,45 +62,47 @@ class MySQL(object):
         sys.path.append("..")
         
         if self.CONFIG is None:
-            self.LOGGER.critical("Unable to get configuration manager. Exit")
+            self._LOGGER.critical("Unable to get configuration manager. Exit")
             sys.exit(1)
         
         if self.RETRIES is None:
-            self.LOGGER.info("No DB retry value set. Using default value")
+            self._LOGGER.info("No DB retry value set. Using default value")
             self.RETRIES = 3
         
         if self.WAIT is None:
-            self.LOGGER.info("No DB wait value set. Using default value")
+            self._LOGGER.info("No DB wait value set. Using default value")
             self.WAIT = 60
 
     # Connect to MySQL using settings from DatabaseConfig.py
     def connect(self):
-        '''Connect to database'''
+        """Connect to database"""
         
         attempts = 1
         
-        databaseSettings = self.CONFIG.getConfigCategory("Database")
+        database_settings = self.CONFIG.getConfigCategory("Database")
         
-        if self.LOGGER is None:
-            __init__()
+        if self._LOGGER is None:
+            self.__init__()
         
         while attempts <= self.CONFIG.getIntConfig("Database", "retries") and self.CONNECTION is None:
             
             try:
-                self.LOGGER.info("Attempting DB connection")
-                self.CONNECTION = MySQLdb.connect(
-                host=databaseSettings["url"],
-                user=databaseSettings["username"],
-                passwd=databaseSettings["password"], 
-                db=databaseSettings["database"])
+                self._LOGGER.info("Attempting DB connection")
+                # self.CONNECTION = MySQLdb.connect(
+                # host=database_settings["url"],
+                # user=database_settings["username"],
+                # passwd=database_settings["password"],
+                # db=database_settings["database"])
+                self.CONNECTION = pymysql.connect(database_settings["url"], database_settings["username"],
+                                                  database_settings["password"], database_settings["database"])
                 # Turn ping on to automatically connect to DB when idle and disconnects
                 self.CONNECTION.ping(True)
-                self.LOGGER.info("DB connection successful")
+                self._LOGGER.info("DB connection successful")
                 
-            except(MySQLdb.Error) as e:
+            except Exception as e:
                 # Failed to connect
-                self.LOGGER.error("Unable to connect to database:'" + str(databaseSettings["url"]) + "|" + str(e.args[0]))
-                self.LOGGER.error("Attempt " + str(attempts) + " failed. Retrying in " + str(databaseSettings["wait"]) + " secs")
+                self._LOGGER.error("Unable to connect to database:'" + str(database_settings["url"]) + "|" + str(e.args[0]))
+                self._LOGGER.error("Attempt " + str(attempts) + " failed. Retrying in " + str(database_settings["wait"]) + " secs")
                 # Wait for n seconds before attempting to reconnect
                 time.sleep(self.WAIT)
                 # Continue in loop
@@ -110,30 +115,30 @@ class MySQL(object):
 
     # Close DB CONNECTION
     def disconnect(self):
-        '''Close CONNECTION to database'''
+        """Close CONNECTION to database"""
         
         try:
             # Only close CONNECTION if CONNECTION exists
             if self.CONNECTION is not None:
-                self.LOGGER.info("Attempting to close DB connection")
+                self._LOGGER.info("Attempting to close DB connection")
                 self.CONNECTION.close()
                 self.CONNECTION = None
                 
-                self.LOGGER.info("Close DB connection successful")
+                self._LOGGER.info("Close DB connection successful")
                 
                 return True
-        except MySQLdb.Error as e:
-            self.LOGGER.error("Unable to disconnect from DB:")
-            self.LOGGER.error(e.args[0], e.args[1])
+        except Exception as e:
+            self._LOGGER.error("Unable to disconnect from DB:")
+            self._LOGGER.error(e.args[0], e.args[1])
             
         return False
 
     # Execute query with no return results
     def executeNonUpdate(self, statement, values):
-        '''Execute SQL with no return results.
+        """Execute SQL with no return results.
         Accepts an SQL statement with %s parameters which will be replaced with
         the values parameter. If no %s is used, values should be set to None.
-        Returns last inserted row ID reguardless of SQL type.'''
+        Returns last inserted row ID reguardless of SQL type."""
         
         id = None
         attempts = 1
@@ -153,11 +158,11 @@ class MySQL(object):
                 # Exit retry loop and return value
                 break
             
-            except MySQLdb.Error as e:
-                self.LOGGER.error(e, exc_info=True)
-                self.LOGGER.debug(cursor._last_executed)
+            except Exception as e:
+                self._LOGGER.error(e, exc_info=True)
+                self._LOGGER.debug(cursor._last_executed)
                 
-                self.LOGGER.error("Retrying in " + str(self.WAIT) + " secs")
+                self._LOGGER.error("Retrying in " + str(self.WAIT) + " secs")
                 # Increment number of times it has tried to execute this function
                 attempts += 1
                 time.sleep(self.WAIT)
@@ -168,10 +173,10 @@ class MySQL(object):
                     # Try reconnecting to DB
                     self.connect()
                     
-                except MySQLdb.Error as e:
+                except Exception as e:
                     # Ignore connect error and gracefully exit function
-                    self.LOGGER.error("DB reconnect failed:")
-                    self.LOGGER.error(e, exc_info=True)
+                    self._LOGGER.error("DB reconnect failed:")
+                    self._LOGGER.error(e, exc_info=True)
                     raise
                 pass
                 
@@ -184,7 +189,7 @@ class MySQL(object):
 
     # Execute query and return results
     def executeUpdate(self, statement, values):
-        '''Execute query and return all results.'''
+        """Execute query and return all results."""
         
         attempts = 1
         
@@ -202,11 +207,11 @@ class MySQL(object):
                 
                 return results
             
-            except MySQLdb.Error as e:
-                self.LOGGER.error(e, exc_info=True)
-                self.LOGGER.debug(cursor._last_executed)
+            except Exception as e:
+                self._LOGGER.error(e, exc_info=True)
+                self._LOGGER.debug(cursor._last_executed)
                 
-                self.LOGGER.error("Retrying in " + str(self.WAIT) + " secs")
+                self._LOGGER.error("Retrying in " + str(self.WAIT) + " secs")
                 # Increment number of times it has tried to execute this function
                 attempts += 1
                 time.sleep(self.WAIT)
@@ -218,11 +223,11 @@ class MySQL(object):
                     self.connect()
                 except MySQLdb.Error as e:
                     # Ignore connect error and gracefully exit function
-                    self.LOGGER.error("DB reconnect failed:")
-                    self.LOGGER.error(e, exc_info=True)
+                    self._LOGGER.error("DB reconnect failed:")
+                    self._LOGGER.error(e, exc_info=True)
                     raise
                 except ConnectionException as ce:
-                    self.LOGGER.error(ce, exc_info=True)
+                    self._LOGGER.error(ce, exc_info=True)
                     raise ce
                 pass
                 
@@ -232,14 +237,13 @@ class MySQL(object):
                 raise ConnectionException("Attribute error in DB")
         # Fail after retry
         return None
-        
 
     # Execute query and return one result
     def executeOneUpdate(self, statement, values):
-        '''Execute SQL and returns one result.
+        """Execute SQL and returns one result.
         Accepts an SQL statement with %s parameters which will be replaced with
         the values parameter. If no %s is used, values should be set to None.
-        Returns the first result only.'''
+        Returns the first result only."""
         
         attempts = 1
         
@@ -257,12 +261,12 @@ class MySQL(object):
                 
                 return result
             
-            except MySQLdb.Error as e:
-                self.LOGGER.error(e, exc_info=True)
+            except Exception as e:
+                self._LOGGER.error(e, exc_info=True)
                 
-                self.LOGGER.error("Retrying in " + str(self.WAIT) + " secs")
+                self._LOGGER.error("Retrying in " + str(self.WAIT) + " secs")
                 
-                self.LOGGER.error("Retrying in " + str(self.WAIT) + " secs")
+                self._LOGGER.error("Retrying in " + str(self.WAIT) + " secs")
                 # Increment number of times it has tried to execute this function
                 attempts += 1
                 time.sleep(self.WAIT)
@@ -275,8 +279,8 @@ class MySQL(object):
                     
                 except ConnectionException as ce:
                     # Ignore connect error and gracefully exit function
-                    self.LOGGER.error("DB reconnect failed:")
-                    self.LOGGER.error(ce, exc_info=True)
+                    self._LOGGER.error("DB reconnect failed:")
+                    self._LOGGER.error(ce, exc_info=True)
                     raise ce
                 
             except AttributeError as ae:
@@ -286,4 +290,3 @@ class MySQL(object):
                 
         # Fail after retry
         return None
-
