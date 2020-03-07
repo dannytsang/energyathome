@@ -23,15 +23,15 @@ __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 import sys
 import threading
 
-import Debug
-import Twitter
+import debug
+import twitter
 from config.Config import ConfigManager
 
 class JobChecker(threading.Thread):
     '''Scheduler which calls task function containing the jobs to run'''
     CONFIG = ConfigManager()
-    twitter = Twitter.Twitter()
-    LOGGER = Debug.getLogger("energyathome.datalogger.scheduler")
+    twitter = twitter.Twitter()
+    LOGGER = debug.getLogger("energyathome.datalogger.scheduler")
 
     def __init__(self):       
         threading.Thread.__init__(self)

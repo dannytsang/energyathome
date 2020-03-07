@@ -26,7 +26,7 @@ import os
 from datetime import datetime
 from datetime import timedelta
 
-import Debug
+import debug
 from database import MySQL
 from config.Config import ConfigManager
 
@@ -34,7 +34,7 @@ class Twitter:
     
     def __init__(self):
         # Instantiate logger
-        self.LOGGER = Debug.getLogger("energyathome.datalogger.twitter")
+        self.LOGGER = debug.getLogger("energyathome.datalogger.twitter")
         # Configuration Manager
         self.CONFIG = ConfigManager()
         
@@ -58,7 +58,7 @@ class Twitter:
         currentHour = currentTime.strftime("%H")
         # If current hour does not match last post hour then it's been a new hour since last post
         if(currentHour != self.LAST_HOURLY_POST):
-            Debug.writeOut("Hourly condtion met (" + currentHour + " != " + self.LAST_HOURLY_POST + "). Posting to Twitter")
+            debug.writeOut("Hourly condtion met (" + currentHour + " != " + self.LAST_HOURLY_POST + "). Posting to Twitter")
             # Create SQL to get data for tweet
             sql = "SELECT COALESCE(ROUND(AVG(energy), 2), 0), " +\
             "COALESCE(MAX(energy), 0), COALESCE(ROUND(AVG(temperature), 1), 0) " +\
@@ -95,7 +95,7 @@ class Twitter:
         # Check if the hours of the time is 00 which means midnight and the current day
         # has changed
         if(currentHour == "00" and (self.LAST_DAY_POST == "" or currentTime.strftime("%d") != self.LAST_DAY_POST)):
-            Debug.writeOut("Daily condition met (hour of day:" + currentHour + " == 00 && day:" + currentTime.strftime("%d") + " == " + self.LAST_DAY_POST + "). Posting to Twitter")
+            debug.writeOut("Daily condition met (hour of day:" + currentHour + " == 00 && day:" + currentTime.strftime("%d") + " == " + self.LAST_DAY_POST + "). Posting to Twitter")
             # Create SQL to get data for tweet
             sql = " SELECT COALESCE(ROUND(AVG(energy), 2), 0), COALESCE(MAX(energy), 0), COALESCE(ROUND(AVG(temperature), 1), 0) FROM historical_data WHERE date_time >= ADDDATE(NOW(), INTERVAL -1 DAY)"
             self.LOGGER.debug(sql)

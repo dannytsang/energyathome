@@ -20,12 +20,12 @@
 
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
-import Debug
+import debug
 from database.MySQL import MySQL
 from database.DatabaseException import ConnectionException
 
 # Instantiate Logger
-LOGGER = Debug.getLogger("energyathome.datalogger.historicaldata")
+LOGGER = debug.getLogger("energyathome.datalogger.historicaldata")
 
 # Instantiate DB
 DATABASE = MySQL()

@@ -23,8 +23,8 @@ __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 import math
 from datetime import datetime, timedelta, date
 
-import HistoricalData
-import Debug
+import historical_data
+import debug
 from database import MySQL
 from config.Config import ConfigManager
 from database.DatabaseException import ConnectionException
@@ -35,7 +35,7 @@ class CheckLiveTriggers:
         # Instantiate config manager
         self.CONFIG = ConfigManager()
         # Get logger instance
-        self.LOGGER = Debug.getLogger("energyathome.datalogger.datatrigger")
+        self.LOGGER = debug.getLogger("energyathome.datalogger.datatrigger")
     
     def checkTriggers(self, historicalData):
         '''Check if data received meets any one trigger conditions.
@@ -45,7 +45,7 @@ class CheckLiveTriggers:
            
         # Get last recorded data point. Used for trigger information
         try:
-            previousDataPoint = HistoricalData.getLastHistoricalData(historicalData)
+            previousDataPoint = historical_data.getLastHistoricalData(historicalData)
             
         except ConnectionException as ce:
             raise ce

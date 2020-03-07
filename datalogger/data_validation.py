@@ -20,7 +20,7 @@
 
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
-import Debug
+import debug
 from config.Config import ConfigManager
 from database.DatabaseException import ConnectionException
 
@@ -30,7 +30,7 @@ class CheckLiveData:
         # Instantiate config manager
         self.CONFIG = ConfigManager()
         # Get logger instance
-        self.LOGGER = Debug.getLogger("energyathome.datalogger.datavalidation")
+        self.LOGGER = debug.getLogger("energyathome.datalogger.datavalidation")
         
     # Validate data captured from device
     def validateData(self, historicalData):
@@ -212,10 +212,10 @@ class CheckLiveData:
     def checkNewAppliance(self, historicalData):
         '''Checks if the data will append or insert a new appliance. False = not new True = new appliance'''
         
-        import HistoricalData
+        import historical_data
         
         # Retrieve the device ID in the database if one exists
-        deviceId = HistoricalData.getDeviceId(historicalData.name, historicalData.applianceId, historicalData.sensorType)
+        deviceId = historical_data.getDeviceId(historicalData.name, historicalData.applianceId, historicalData.sensorType)
         
         if deviceId is None:
             # No ID found and therefore one would be created on insert

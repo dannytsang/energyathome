@@ -21,22 +21,22 @@
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
 import os
-import Core
+import core
 
 import cPickle as pickle
 
-import Debug
-import HistoricalData
+import debug
+import historical_data
 from database import MySQL
 from config.Config import ConfigManager
-from DataValidation import CheckLiveData
-from DataTrigger import CheckLiveTriggers
+from data_validation import CheckLiveData
+from data_trigger import CheckLiveTriggers
 
 class BackupRestore:
     
     def __init__(self):
         # Instantiate Logger
-        self.LOGGER = Debug.getLogger("energyathome.datalogger.offlinehandler")
+        self.LOGGER = debug.getLogger("energyathome.datalogger.offlinehandler")
         # Configuration Manager
         self.CONFIG = ConfigManager()
         # Data validation class
@@ -78,7 +78,7 @@ class BackupRestore:
                 pass
         # Check to exit
         if exit:
-            Core.shutdown()
+            core.shutdown()
 
     def restore(self):
         '''Starts the restore process from a file.'''
@@ -115,7 +115,7 @@ class BackupRestore:
                 if hDataValid:
                     self.LOGGER.info("Inserting: " + str(record.__dict__))
                     #HistoricalData.insertData(record)
-                    HistoricalData.insertData(hData)
+                    historical_data.insertData(hData)
                 else:
                     self.LOGGER.info("Skipped backup record")
                 

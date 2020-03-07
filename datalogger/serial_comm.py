@@ -23,7 +23,7 @@ __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 import serial
 from time import sleep
 
-import Debug
+import debug
 from config.Config import ConfigManager
 
 class DeviceManager():
@@ -40,7 +40,7 @@ class DeviceManager():
     
     def __init__(self):
         # Instantiate Logger
-        self.LOGGER = Debug.getLogger("energyathome.datalogger.serialcomm")
+        self.LOGGER = debug.getLogger("energyathome.datalogger.serialcomm")
 
         self.COMM = serial.Serial()
         

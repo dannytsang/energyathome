@@ -23,14 +23,14 @@ __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 from xml.dom import minidom, Node
 from xml.parsers.expat import ExpatError
 
-import Debug
-from HistoricalData import *
+import debug
+from historical_data import *
 
 class Parser:
     
     def __init__(self):
         # Instantiate Logger
-        self.LOGGER = Debug.getLogger("energyathome.datalogger.xmlparser")
+        self.LOGGER = debug.getLogger("energyathome.datalogger.xmlparser")
 
     # Used for debugging with example files. May be used in the future
     def parseXMLFile(self, xmlFile):
