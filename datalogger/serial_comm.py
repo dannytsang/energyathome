@@ -21,10 +21,12 @@
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
 import serial
-from time import sleep
+import logging
 
-import debug
 from config.Config import ConfigManager
+
+_LOGGER = logging.getLogger(__name__)
+
 
 class DeviceManager():
     
@@ -39,8 +41,6 @@ class DeviceManager():
         return cls.INSTANCE
     
     def __init__(self):
-        # Instantiate Logger
-        self.LOGGER = debug.getLogger("energyathome.datalogger.serialcomm")
 
         self.COMM = serial.Serial()
         
@@ -49,7 +49,7 @@ class DeviceManager():
 
     # Open serial connection
     def open(self):
-        '''Open connection to USB to serial port'''       
+        """Open connection to USB to serial port"""       
         
         self.COMM.port = self.CONFIG.getConfig("SerialConnection", "serialport")
         self.COMM.baudrate = self.CONFIG.getIntConfig("SerialConnection", "baudrate")
@@ -58,28 +58,28 @@ class DeviceManager():
         self.COMM.bytesize = self.CONFIG.getIntConfig("SerialConnection", "bytesize")
         
         if(self.COMM.isOpen() == False):
-            self.LOGGER.info('Establishing connection to device')
+            _LOGGER.info('Establishing connection to device')
             self.COMM.open()
         else:
-            self.LOGGER.info('Connection already opened')
+            _LOGGER.info('Connection already opened')
             
-        self.LOGGER.info('Device connected:' + str(self.COMM.isOpen()))
+        _LOGGER.info('Device connected:' + str(self.COMM.isOpen()))
 
     # Close serial connection
     def close(self):
-        '''Close connection to USB to Serial port'''
+        """Close connection to USB to Serial port"""
         
         if(self.COMM.isOpen):
-            self.LOGGER.info('Closing device connection')
+            _LOGGER.info('Closing device connection')
             self.COMM.close()
             
-        self.LOGGER.info('Device connection closed')
+        _LOGGER.info('Device connection closed')
 
     # Get data from serial connection
     def read(self):
-        '''Read data from USB to Serial device. Connection must be established.'''
+        """Read data from USB to Serial device. Connection must be established."""
         
         data = self.COMM.readline()
         if(len(data) > 0):
-            self.LOGGER.debug('serial data: ' + data)
+            _LOGGER.debug('serial data: ' + data)
             return data

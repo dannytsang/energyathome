@@ -20,18 +20,20 @@
 
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
+import logging
 import sys
 import threading
 
-import debug
 import twitter
 from config.Config import ConfigManager
 
+_LOGGER = logging.getLogger(__name__)
+
+
 class JobChecker(threading.Thread):
-    '''Scheduler which calls task function containing the jobs to run'''
+    """Scheduler which calls task function containing the jobs to run"""
     CONFIG = ConfigManager()
     twitter = twitter.Twitter()
-    LOGGER = debug.getLogger("energyathome.datalogger.scheduler")
 
     def __init__(self):       
         threading.Thread.__init__(self)
@@ -40,24 +42,21 @@ class JobChecker(threading.Thread):
         self._interval = self.CONFIG.getIntConfig("Scheduler", "checkInverval") * 60
     
     def setInterval(self, interval):
-        '''Set the number of seconds to sleep between tasks'''
+        """Set the number of seconds to sleep between tasks"""
         
         self._interval = interval
     
     def stop(self):
-        '''Stop this thread'''
+        """Stop this thread"""
+
         
-        global LOGGER
-        
-        LOGGER.info("Stopping Job Checker")
+        _LOGGER.info("Stopping Job Checker")
         self._finished.set()
     
     def run(self):
-        '''Main loop which calls the task function unless it is told to stop'''
+        """Main loop which calls the task function unless it is told to stop"""
         
-        global LOGGER
-        
-        LOGGER.info("Starting Job Checker")
+        _LOGGER.info("Starting Job Checker")
         
         while 1:
             if self._finished.isSet(): return
@@ -67,6 +66,6 @@ class JobChecker(threading.Thread):
             self._finished.wait(self._interval)
     
     def task(self):
-        '''Task contains the code body which will be executed at specific intervals set in the config'''
+        """Task contains the code body which will be executed at specific intervals set in the config"""
         
         pass

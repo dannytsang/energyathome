@@ -20,13 +20,11 @@
 
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
-import math
 import sys
-from datetime import datetime, timedelta, date
+import logging
+from datetime import datetime, date
 
-import serial_comm
 import historical_data
-import debug
 from database.MySQL import MySQL
 from database.DatabaseException import ConnectionException
 from config.Config import ConfigManager
@@ -39,8 +37,8 @@ from offline_handler import BackupRestore
 # Configuration Manager
 CONFIG = ConfigManager()
 
-# Instantiate Logger
-LOGGER = debug.getLogger("energyathome.datalogger.core")
+# Instantiate _LOGGER
+_LOGGER = logging.getLogger(__name__)
 
 # Instantiate DB
 DATABASE = MySQL()
@@ -64,10 +62,10 @@ OFFLINEMODE = False
 
 
 def run():
-    '''Reads, parses and stores data'''
+    """Reads, parses and stores data"""
 
     global CONFIG
-    global LOGGER
+    global _LOGGER
     global VALIDATOR
     global TRIGGER
     global DEVICE
@@ -95,7 +93,7 @@ def run():
                 hData.time = datetime.strptime(tempDate, "%Y-%m-%e %H:%M:%S")
             except ValueError:
                 # Unable to parse time from device
-                LOGGER.error("Error parsing time from device '" + hData.time + "'")
+                _LOGGER.error("Error parsing time from device '" + hData.time + "'")
 
         # If error checking is enabled
         if VALIDATOR is not None and CONFIG.getBooleanConfig("Tolerence", "enabled"):
@@ -150,19 +148,18 @@ def run():
                     else:
                         shutdown()
             else:
-                LOGGER.info("Skipped")
+                _LOGGER.info("Skipped")
         else:
-            LOGGER.info("Offline mode: Active")
+            _LOGGER.info("Offline mode: Active")
 
 
 # Initialise
 def init():
-    '''Initialises program.
+    """Initialises program.
     Inserts the 0 value for last date + 1 second and 0 value for current
-    date time. Allows graph to draw 0 instead of tacking from last know value'''
+    date time. Allows graph to draw 0 instead of tacking from last know value"""
 
     global CONFIG
-    global LOGGER
     global SCHEDULER
     global VALIDATOR
     global TRIGGER
@@ -170,7 +167,7 @@ def init():
     global DEVICE
     global OFFLINE
 
-    LOGGER.info("Initialising")
+    _LOGGER.info("Initialising")
 
     # Instantiate validation class if enabled
     if CONFIG.getBooleanConfig("Tolerence", "enabled"):
@@ -186,16 +183,16 @@ def init():
 
     # Connect to database
     try:
-        LOGGER.debug("Start DB connection")
+        _LOGGER.debug("Start DB connection")
         DATABASE.connect()
     except ConnectionException:
-        LOGGER.critical("Unable to connect to database. Exiting...")
+        _LOGGER.critical("Unable to connect to database. Exiting...")
         sys.exit(1)
 
     # If offline backup is enabled insert any data stored in file.
-    LOGGER.debug("Checking offline setting")
+    _LOGGER.debug("Checking offline setting")
     if CONFIG.getBooleanConfig("Application", "enableOffline"):
-        LOGGER.debug("Offline backup enabled")
+        _LOGGER.debug("Offline backup enabled")
         # Restore data
         try:
             OFFLINE.restore()
@@ -204,34 +201,34 @@ def init():
             shutdown()
 
     # Get last date time + 1 second for each channel and insert into DB
-    LOGGER.info("Inserting previous 0 records")
+    _LOGGER.info("Inserting previous 0 records")
     sql = "INSERT INTO historical_data (date_time, channel_id, data, unit) " + \
           "SELECT (SELECT ADDDATE(MAX(date_time), INTERVAL 1 SECOND) FROM " + \
           "historical_data h WHERE h.channel_id = c.channel_id), c.channel_id, 0, " + \
           "CASE c.channel WHEN 'temp' THEN 'C' ELSE 'W' END FROM channel c"
-    LOGGER.debug(sql)
+    _LOGGER.debug(sql)
     try:
         DATABASE.executeUpdate(sql, None)
     except ConnectionException:
-        LOGGER.critical("Unable to connect to database. Exiting...")
+        _LOGGER.critical("Unable to connect to database. Exiting...")
         sys.exit(1)
 
     # Insert records for current time
-    LOGGER.info("Inserting current 0 records")
+    _LOGGER.info("Inserting current 0 records")
     sql = "INSERT INTO historical_data (date_time, channel_id, data, unit) " + \
           "SELECT NOW(), c.channel_id, 0, CASE c.channel WHEN 'temp' THEN 'C' ELSE 'W' END " + \
           "FROM channel c WHERE c.channel_id IN (SELECT DISTINCT h.channel_id FROM historical_data h)"
-    LOGGER.debug(sql)
+    _LOGGER.debug(sql)
     try:
         DATABASE.executeUpdate(sql, None)
     except ConnectionException:
-        LOGGER.critical("Database error. Exiting...")
+        _LOGGER.critical("Database error. Exiting...")
         sys.exit(1)
 
     # Create new instance of scheduler
-    LOGGER.info("Checking scheduler setting")
+    _LOGGER.info("Checking scheduler setting")
     if CONFIG.getBooleanConfig("Scheduler", "enabled"):
-        LOGGER.info("Scheduler enabled")
+        _LOGGER.info("Scheduler enabled")
         # Import the module only if scheduler is enabled
         import scheduler
         # Instantiate and start the scheduler
@@ -243,20 +240,20 @@ def init():
         DEVICE = DeviceManager()
         DEVICE.open()
     except Exception as e:
-        LOGGER.critical("Unable to connect to device port.\n" + str(e))
+        _LOGGER.critical("Unable to connect to device port.\n" + str(e))
         shutdown()
 
 
 def shutdown():
-    '''Procedures to run before ending program'''
+    """Procedures to run before ending program"""
 
     global CONFIG
-    global LOGGER
+    global _LOGGER
     global SCHEDULER
     global DATABASE
     global DEVICE
 
-    LOGGER.info("Shutting down energyathome")
+    _LOGGER.info("Shutting down energyathome")
 
     # Close connection to serial port
     if DEVICE is not None:
@@ -271,5 +268,5 @@ def shutdown():
         SCHEDULER.stop()
 
     # Exit program
-    LOGGER.debug("Exit 0")
+    _LOGGER.debug("Exit successfully")
     sys.exit(0)

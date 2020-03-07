@@ -20,24 +20,25 @@
 
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
-import debug
+import logging
 from config.Config import ConfigManager
 from database.DatabaseException import ConnectionException
+
+_LOGGER = logging.getLogger(__name__)
+
 
 class CheckLiveData:
     
     def __init__(self):
         # Instantiate config manager
         self.CONFIG = ConfigManager()
-        # Get logger instance
-        self.LOGGER = debug.getLogger("energyathome.datalogger.datavalidation")
         
     # Validate data captured from device
     def validateData(self, historicalData):
-        '''Checks historical data fall within parameter which is customised in the config file.
+        """Checks historical data fall within parameter which is customised in the config file.
         Returns results in a tuple size of 2.
         [0] = True or False depending if validation was successful or not
-        [1] = HistoricalData.HistoricalData class of sanitised data'''
+        [1] = HistoricalData.HistoricalData class of sanitised data"""
         
         valid = True
         
@@ -61,7 +62,7 @@ class CheckLiveData:
                 # If it returns true then it's a new appliance and should be ignored
                 if self.checkNewAppliance(historicalData) is True:
                     valid = False
-                    self.LOGGER.info("Appliance ID " + str(historicalData.applianceId) + " was not stored due to allowNewAppliances = False")
+                    _LOGGER.info("Appliance ID " + str(historicalData.applianceId) + " was not stored due to allowNewAppliances = False")
                     
             # Check channel names
             if self.CONFIG.getBooleanConfig("Tolerence", "allowBlankChannelNames") is False:
@@ -89,7 +90,7 @@ class CheckLiveData:
         return (valid, historicalData)
     
     def checkApplianceId(self, historicalData):
-        '''Checks if appliance ID falls within a set range'''
+        """Checks if appliance ID falls within a set range"""
         
         # Get maximum appliance Id value
         maxAppId = self.CONFIG.getIntConfig("Tolerence", "maxApplianceId")
@@ -97,24 +98,24 @@ class CheckLiveData:
         try:
             # Check if appliance number exceeds maximum
             if int(historicalData.applianceId) > maxAppId:
-                self.LOGGER.info("Appliance ID " + str(historicalData.applianceId) + " > " + str(maxAppId))
+                _LOGGER.info("Appliance ID " + str(historicalData.applianceId) + " > " + str(maxAppId))
                 return False
             
             else:
                 return True
             
-        except ValueError, ve:
-            self.LOGGER.info("Check max App ID failed: " + str(historicalData.applianceId) + " > " + str(maxAppId))
+        except ValueError as ve:
+            _LOGGER.info("Check max App ID failed: " + str(historicalData.applianceId) + " > " + str(maxAppId))
             return False
             
         except AttributeError as ae:
-            self.LOGGER.info("Check max App ID failed: No attribute Error:" + str(ae))
+            _LOGGER.info("Check max App ID failed: No attribute Error:" + str(ae))
             return False
         except ConnectionException as ce:
             raise ce
     
     def checkDeviceName(self, historicalData):
-        '''Checks device name is in specified list'''
+        """Checks device name is in specified list"""
         
         # Get device names from config
         deviceNames = self.CONFIG.getConfig("Tolerence", "allowedDeviceNames")
@@ -139,22 +140,22 @@ class CheckLiveData:
                     break
         
         if match is False:
-            self.LOGGER.info("No matches found for device name '" + str(historicalData.name) + "'")
+            _LOGGER.info("No matches found for device name '" + str(historicalData.name) + "'")
             return False
         
         else:
             return True
     
     def checkChannelNames(self, historicalData):
-        '''Checks channel names are valid'''
+        """Checks channel names are valid"""
         
         if None in historicalData.energy:
             # Remove None key value from energy
-            self.LOGGER.info("Found null channel name with value " + str(historicalData.energy[""]))
+            _LOGGER.info("Found null channel name with value " + str(historicalData.energy[""]))
             del historicalData.energy[None]
             
         if "" in historicalData.energy:
-            self.LOGGER.info("Found blank channel name with value " + str(historicalData.energy[""]))
+            _LOGGER.info("Found blank channel name with value " + str(historicalData.energy[""]))
             del historicalData.energy[""]
             
         # Check there are energy values left after cleansing
@@ -164,7 +165,7 @@ class CheckLiveData:
             return historicalData
     
     def checkChannels(self, historicalData):
-        '''Checks channels are within specified list'''
+        """Checks channels are within specified list"""
         
         # Get device containing appliances and related channels
         allowedChannels = self.CONFIG.getConfigCategory("device_" + historicalData.name)
@@ -184,7 +185,7 @@ class CheckLiveData:
                     elif key is not None and channels is not None and key not in channels:
                         # Remove invalid channel
                         keysToRemove.append(key)
-                        self.LOGGER.info("Found invalid channel '" + str(key) + "' for appliance " + str(historicalData.applianceId) +\
+                        _LOGGER.info("Found invalid channel '" + str(key) + "' for appliance " + str(historicalData.applianceId) +\
                         " containing " + str(historicalData.energy[key]))
                         
                 except KeyError as ke:
@@ -196,7 +197,7 @@ class CheckLiveData:
             
             # Loop through list of keys which failed validation
             for key in keysToRemove:
-                self.LOGGER.info("Deleting " + str(key))
+                _LOGGER.info("Deleting " + str(key))
                 del historicalData.energy[key]
                 
             # Check there are energy values left after cleansing
@@ -210,7 +211,7 @@ class CheckLiveData:
             return None
     
     def checkNewAppliance(self, historicalData):
-        '''Checks if the data will append or insert a new appliance. False = not new True = new appliance'''
+        """Checks if the data will append or insert a new appliance. False = not new True = new appliance"""
         
         import historical_data
         

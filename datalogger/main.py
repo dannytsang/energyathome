@@ -23,31 +23,31 @@
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
 import sys
+import logging
 
-import debug
 import core
 
 # Instantiate Logger
-LOGGER = debug.getLogger("energyathome.datalogger.main")
+_LOGGER = logging.getLogger(__name__)
+
 
 def main():
     """Main function which starts the program"""
-    
-    global LOGGER
-    
-    LOGGER.info("Starting energy@home")
-    
+
+    _LOGGER.info("Starting energy@home")
+
     try:
         # initialise
         core.init()
-        
+
         while True:
             # Capture and store data
             core.run()
     # Catch ctrl+c
     except KeyboardInterrupt:
-        LOGGER.info("Caught keyboard interrupt")
+        _LOGGER.info("Caught keyboard interrupt")
         core.shutdown()
-    
+
+
 if __name__ == "__main__":
     sys.exit(main())
