@@ -25,9 +25,9 @@ See COPYING for more details about the licensing of this program.
   * Intelligent and configurable data capture and storage using triggers and filters 
   * Requires standard Linux, Apache, MySQL, PHP (LAMP) set up with only Python as additional software requirement. 
 
-[<img src="http://www.dannytsang.co.uk/wp-content/uploads/2009/12/Energyathome-150x150.jpg">](http://www.dannytsang.co.uk/wp-content/uploads/2009/12/Energyathome.jpg "Standard energy@home")
+[<img src="https://i0.wp.com/dannytsang.co.uk/wp-content/uploads/2009/12/Energyathome-150x150.jpg">](https://i0.wp.com/dannytsang.co.uk/wp-content/uploads/2009/12/Energyathome.jpg "Standard energy@home")
 
-[<img src="http://www.dannytsang.co.uk/wp-content/uploads/2011/05/Grid-150x150.png">](http://www.dannytsang.co.uk/wp-content/uploads/2011/05/Grid.png "Data Grid")
+[<img src="https://i0.wp.com/dannytsang.co.uk/wp-content/uploads/2011/05/Grid-150x150.png">](https://i0.wp.com/dannytsang.co.uk/wp-content/uploads/2011/05/Grid.png "Data Grid")
 
 # INSTALL
 
