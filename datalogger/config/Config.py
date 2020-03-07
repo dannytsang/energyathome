@@ -21,7 +21,7 @@
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
 
-import ConfigParser as configParser
+import configparser
 
 import os
 import logging, logging.config
@@ -32,6 +32,7 @@ class ConfigManager:
     PARSER = None
 
     _CONFIG_DIR = ""
+    _LOGGER = logging.getLogger("energyathome.datalogger.config.ConfigManager")
 
     def __init__(self):
 
@@ -43,7 +44,6 @@ class ConfigManager:
         log_config_path = os.path.dirname(__file__) + os.sep + "energyathome.ini"
         print(log_config_path)
         logging.config.fileConfig(log_config_path)
-        self._LOGGER = logging.getLogger("energyathome.datalogger.config.config")
 
         try:
             # Get the parent directory of this file and append the config file name
@@ -54,9 +54,9 @@ class ConfigManager:
             _CONFIG_DIR += self.CONFIG_FILENAME
 
             # Initialized config parser
-            self.PARSER = configParser.SafeConfigParser(defaults=None)
+            self.PARSER = configparser.ConfigParser(defaults=None)
             # Config file is required. Get Config.py file directory location
-            self.PARSER.readfp(open(_CONFIG_DIR))
+            self.PARSER.read(open(_CONFIG_DIR))
 
         except IOError as ie:
             self._LOGGER.error("Config File '" + _CONFIG_DIR + "' not found")
@@ -80,10 +80,10 @@ class ConfigManager:
                 self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
 
-        except configParser.NoSectionError as nse:
+        except configparser.NoSectionError as nse:
             self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        except configParser.NoOptionError as nse:
+        except configparser.NoOptionError as nse:
             self._LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
             return None
 
@@ -105,10 +105,10 @@ class ConfigManager:
                 self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
 
-        except configParser.NoSectionError as nse:
+        except configparser.NoSectionError as nse:
             self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        except configParser.NoOptionError as nse:
+        except configparser.NoOptionError as nse:
             self._LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
             return None
         except ValueError as ve:
@@ -129,10 +129,10 @@ class ConfigManager:
                 self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
 
-        except configParser.NoSectionError as nse:
+        except configparser.NoSectionError as nse:
             self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        except configParser.NoOptionError as nse:
+        except configparser.NoOptionError as nse:
             self._LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
             return None
         except ValueError as ve:
@@ -153,10 +153,10 @@ class ConfigManager:
                 self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
 
-        except configParser.NoSectionError as nse:
+        except configparser.NoSectionError as nse:
             self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        except configParser.NoOptionError as nse:
+        except configparser.NoOptionError as nse:
             self._LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
             return None
         except ValueError as ve:
@@ -195,10 +195,10 @@ class ConfigManager:
             else:
                 self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
-        except configParser.NoSectionError as nse:
+        except configparser.NoSectionError as nse:
             self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        except configParser.NoOptionError as nse:
+        except configparser.NoOptionError as nse:
             self._LOGGER.error("No configuration '" + category + "' was found in '" + str(category) + "'category.")
             return None
         except ValueError as ve:
