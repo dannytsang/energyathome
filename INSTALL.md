@@ -68,7 +68,7 @@ This usually installs the latest version of MySQL according to the
 distribution. If that fails try installing a specific version:
 
     
-    `$ sudo apt-get install mysql-server-5.7`
+    `$ sudo apt-get install mysql-server`
 
 where 5.7 is the version of MySQL server.
 
@@ -79,7 +79,7 @@ Energy@Home.
 
 ## web
 
-    `$ sudo apt-get install apache2 php7.0 php7.0-mysql libapache2-mod-php7.0`
+    `$ sudo apt-get install apache2 php php-mysql libapache2-mod-php`
 
 # Recommended Tools
 
