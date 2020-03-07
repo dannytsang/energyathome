@@ -20,7 +20,8 @@
 
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
-import debug
+import logging
+
 from database.MySQL import MySQL
 from database.DatabaseException import ConnectionException
 
