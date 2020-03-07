@@ -1,11 +1,13 @@
 language: python
 python:
-  - "2.6"
   - "2.7"
 # command to install dependencies
 install: "pip install -r install/requirements.txt"
+# Specify MySql depencdency
+services:
+  - mysql
 # setup
 before_script:
-  - mysql -e 'create database energyathome;'
+  - mysql -uroot -e 'create database energyathome;'
 # command to run tests
 script: nosetests
