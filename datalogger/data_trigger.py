@@ -28,6 +28,7 @@ import historical_data
 from config.Config import ConfigManager
 from database.database_exception import ConnectionException
 
+# Instantiate _LOGGER
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -37,16 +38,15 @@ class CheckLiveTriggers:
         # Instantiate config manager
         self.CONFIG = ConfigManager()
 
-    def check_triggers(self, historicalData):
+    def check_triggers(self, data):
         """Check if data received meets any one trigger conditions.
         Returns true if it's met"""
-
+        print("data_trigger logging level: " + logging.getLevelName(10))
         trigger = False
 
         # Get last recorded data point. Used for trigger information
         try:
-            previous_data_point = historical_data.get_last_historical_data(historicalData)
-
+            previous_data_point = historical_data.get_last_historical_data(data)
         except ConnectionException as ce:
             raise ce
 
@@ -70,12 +70,12 @@ class CheckLiveTriggers:
                     trigger = True
 
                 # Check energy variation
-                energy = self.check_energy_trigger(historicalData, previous_data_point)
+                energy = self.check_energy_trigger(data, previous_data_point)
                 if energy is True:
                     trigger = True
 
                 # Check temperature variation
-                temp = self.check_temperature_trigger(historicalData, previous_data_point)
+                temp = self.check_temperature_trigger(data, previous_data_point)
                 if temp is True:
                     trigger = True
 
@@ -85,9 +85,9 @@ class CheckLiveTriggers:
 
         else:
             # No previous data point found
-            _LOGGER.info("No data history for device " + historicalData.name + \
-                         " on app_id=" + str(historicalData.applianceId) + \
-                         " type=" + str(historicalData.sensorType))
+            _LOGGER.info("No data history for device " + data.name + \
+                         " on app_id=" + str(data.applianceId) + \
+                         " type=" + str(data.sensorType))
             trigger = True
 
         # Historical data existed but no conditions were met.
@@ -107,18 +107,18 @@ class CheckLiveTriggers:
         else:
             return False
 
-    def check_energy_trigger(self, historical_data, previous_data_point):
+    def check_energy_trigger(self, data, previous_data_point):
         """Returns true if the energy difference from the previous value is exceeded"""
 
         # Check energy variation. Get absolute value regardless of positive / negative value
         # Must loop through each channel
-        for key, value in historical_data.energy.iteritems():
+        for key, value in data.energy.iteritems():
             if previous_data_point.energy.get(key, None) is not None:
                 # Calculate the difference from last data point and the new one
-                energyDiff = math.fabs(value) - previous_data_point.energy[key]
+                energy_diff = math.fabs(value) - previous_data_point.energy[key]
 
-                if energyDiff >= self.CONFIG.get_float_config("Trigger", "energyvariation"):
-                    _LOGGER.info("Energy trigger condition met with " + str(key) + " " + str(energyDiff) + "w delta")
+                if energy_diff >= self.CONFIG.get_float_config("Trigger", "energyvariation"):
+                    _LOGGER.info("Energy trigger condition met with " + str(key) + " " + str(energy_diff) + "w delta")
                     return True
 
             else:
@@ -128,11 +128,11 @@ class CheckLiveTriggers:
         # Deliberate fall through to return false
         return False
 
-    def check_temperature_trigger(self, historical_data, previous_data_point):
+    def check_temperature_trigger(self, data, previous_data_point):
         """Returns true if the temperature difference from the previous value is exceeded"""
 
         # Check temperature variation. Get absolute value regardless of positive / negative value
-        temp_diff = math.fabs(historical_data.temperature - previous_data_point.temperature)
+        temp_diff = math.fabs(data.temperature - previous_data_point.temperature)
 
         if temp_diff > self.CONFIG.get_float_config("Trigger", "temperatureVariation"):
             _LOGGER.info("Temperature trigger condition met with " + str(temp_diff) + "c delta")
