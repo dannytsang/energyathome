@@ -26,17 +26,21 @@ import sys
 import logging
 
 import core
+import config.log as log
 
 from logging.config import fileConfig
 
 # Get logging configuration file
 fileConfig("config/energyathome.ini")
-# Instantiate Logger
-_LOGGER = logging.getLogger(__name__)
+
 
 
 def main():
     """Main function which starts the program"""
+
+    # Instantiate Logger
+    log.setup_logging()
+    _LOGGER = logging.getLogger(__name__)
     _LOGGER.info("Starting energy@home")
 
     try:

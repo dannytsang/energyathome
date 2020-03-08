@@ -31,16 +31,14 @@ class ConfigManager:
     PARSER = None
 
     _CONFIG_DIR = ""
-    _LOGGER = logging.getLogger("energyathome.datalogger.config.ConfigManager")
 
     def __init__(self):
 
+        self._LOGGER = logging.getLogger(__name__)
         self.CONFIG_FILENAME = "energyathome.ini"
-
         # Instantiate logging
         log_config_path = os.path.dirname(__file__) + os.sep + "energyathome.ini"
-        print(log_config_path)
-        logging.config.fileConfig(log_config_path)
+        self._LOGGER.debug(log_config_path)
 
         try:
             # Get the parent directory of this file and append the config file name
