@@ -20,11 +20,7 @@
 
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
-
-try:
-    import ConfigParser as configParser
-except:
-    import configparser as configParser
+import configparser as configParser
 
 import os
 import logging, logging.config
@@ -39,8 +35,6 @@ class ConfigManager:
 
     def __init__(self):
 
-        global _CONFIG_DIR
-
         self.CONFIG_FILENAME = "energyathome.ini"
 
         # Instantiate logging
@@ -50,19 +44,19 @@ class ConfigManager:
 
         try:
             # Get the parent directory of this file and append the config file name
-            _CONFIG_DIR = os.path.dirname(__file__)
+            self._CONFIG_DIR = os.path.dirname(__file__)
             # If there is no parent directory then do not add a file path separator
             if os.path.dirname(__file__) != "":
-                _CONFIG_DIR += os.sep
-            _CONFIG_DIR += self.CONFIG_FILENAME
+                self._CONFIG_DIR += os.sep
+            self._CONFIG_DIR += self.CONFIG_FILENAME
 
             # Initialized config parser
-            self.PARSER = configParser.SafeConfigParser(defaults = None)
+            self.PARSER = configParser.ConfigParser(defaults=None)
             # Config file is required. Get Config.py file directory location
-            self.PARSER.readfp(open(_CONFIG_DIR))
+            self.PARSER.read_file(open(self._CONFIG_DIR))
 
         except IOError as ie:
-            self._LOGGER.error("Config File '" + _CONFIG_DIR + "' not found")
+            self._LOGGER.error("Config File '" + self._CONFIG_DIR + "' not found")
             self._LOGGER.error("Details: " + str(ie.args))
 
     def get_config_file_path(self):

@@ -35,7 +35,7 @@ considered as minimum requirement:
 
 ## datalogger
 
-Python 2.7.11 PySerial 3.0 PyMySQLDB 1.3.7
+See datalogger/requirements.txt file for list of dependencies.
 
 ## Database
 
@@ -70,7 +70,6 @@ distribution. If that fails try installing a specific version:
     
     `$ sudo apt-get install mysql-server`
 
-where 5.7 is the version of MySQL server.
 
 It will ask for the root password and confirmation of the root password.
 Ensure this is strong password because it will have access to everything on
