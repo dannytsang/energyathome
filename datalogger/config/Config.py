@@ -21,9 +21,9 @@
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
 import configparser as configParser
-
+import logging
+import logging.config
 import os
-import logging, logging.config
 
 
 class ConfigManager:
@@ -37,7 +37,7 @@ class ConfigManager:
         self._LOGGER = logging.getLogger(__name__)
         self.CONFIG_FILENAME = "energyathome.ini"
         # Instantiate logging
-        log_config_path = os.path.dirname(__file__) + os.sep + "energyathome.ini"
+        log_config_path = os.path.dirname(__file__) + os.sep + self.CONFIG_FILENAME
         self._LOGGER.debug(log_config_path)
 
         try:
