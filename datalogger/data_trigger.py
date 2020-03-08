@@ -79,7 +79,7 @@ class CheckLiveTriggers:
                     trigger = True
 
             except AttributeError as ae:
-                _LOGGER.error("Caught Error:" + str(ae))
+                _LOGGER.error("Error checking trigger", ae)
                 trigger = False
 
         else:
@@ -99,11 +99,13 @@ class CheckLiveTriggers:
         # trigger a save point. Ignoring device time so using system time
         if (datetime.today() - previous_data_point.time) >= timedelta(
                 seconds=self.CONFIG.get_int_config("Trigger", "timeout")):
-            _LOGGER.info("Timeout trigger condition met with " + \
-                         str(datetime.today() - previous_data_point.time) + " delta")
+            _LOGGER.info("Timeout trigger condition met with " + str(datetime.today() - previous_data_point.time) +\
+                         " delta")
             return True
 
         else:
+            _LOGGER.info("Timeout trigger condition not met with " + str(datetime.today() - previous_data_point.time) +\
+                         "delta")
             return False
 
     def check_energy_trigger(self, data, previous_data_point):
@@ -122,9 +124,11 @@ class CheckLiveTriggers:
 
             else:
                 # energy value did not exist in previous reading
+                _LOGGER.debug("Energy trigger condition met. No previous energy value found")
                 return True
 
         # Deliberate fall through to return false
+        _LOGGER.debug("Energy trigger condition not met.")
         return False
 
     def check_temperature_trigger(self, data, previous_data_point):
@@ -138,4 +142,5 @@ class CheckLiveTriggers:
             return True
 
         else:
+            _LOGGER.debug("Temperature trigger condition not met with " + str(temp_diff) + "c delta")
             return False
