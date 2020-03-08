@@ -47,9 +47,7 @@ class MySQL(object):
         
         # Configuration Manager
         self.CONFIG = ConfigManager()
-        # Instantiate logging
-        logging.config.fileConfig(self.CONFIG.get_config_file_path())
-        self._LOGGER = logging.getLogger("energyathome.datalogger.database.mysql")
+
         # Connection variable
         self.CONNECTION = None
 
@@ -88,11 +86,6 @@ class MySQL(object):
             
             try:
                 self._LOGGER.info("Attempting DB connection")
-                # self.CONNECTION = MySQLdb.connect(
-                # host=database_settings["url"],
-                # user=database_settings["username"],
-                # passwd=database_settings["password"],
-                # db=database_settings["database"])
                 self.CONNECTION = pymysql.connect(database_settings["url"], database_settings["username"],
                                                   database_settings["password"], database_settings["database"])
                 # Turn ping on to automatically connect to DB when idle and disconnects
