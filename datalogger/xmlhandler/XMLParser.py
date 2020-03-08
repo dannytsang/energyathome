@@ -60,7 +60,10 @@ class Parser:
             return self.process_data(xml_doc)
 
         except ExpatError:
-            self._LOGGER.error("XML parse error with xml string: " + xml_string)
+            try:
+                self._LOGGER.error("XML parse error with xml string: " + xml_string)
+            except TypeError as te:
+                self._LOGGER.error("XML parse error with xml string: " + chr(x) for x in xml_string)
 
             return None
 
