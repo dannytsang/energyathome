@@ -54,32 +54,32 @@ class HistoricalData:
 
 
 # Insert a new device into DB
-def insert_data(historicalData):
+def insert_data(historical_data):
     """Insert historical data into the database with the current data held in
     this class but ignores the datetime field and uses current server time"""
 
     global DATABASE
 
-    if historicalData is not None:
+    if historical_data is not None:
         # Get device id
-        deviceId = get_device_id(historicalData.name, historicalData.applianceId, historicalData.sensorType)
+        device_id = get_device_id(historical_data.name, historical_data.applianceId, historical_data.sensorType)
 
         # If device / channel does not exist
-        if deviceId is None:
+        if device_id is None:
             # Create new device
-            deviceId = create_device(historicalData)
+            device_id = create_device(historical_data)
         else:
             # Need to get device ID from tuple
-            deviceId = deviceId[0]
+            device_id = device_id[0]
 
-        if deviceId is not None:
-            # Interate all channels and store the values
-            for key, value in historicalData.energy.iteritems():
+        if device_id is not None:
+            # Iterate all channels and store the values
+            for key, value in historical_data.energy.items():
                 # Get channel ID
-                channelId = get_channel_id(deviceId, key)
+                channel_id = get_channel_id(device_id, key)
 
-                if channelId is None:
-                    channelId = create_channel(deviceId, key)
+                if channel_id is None:
+                    channel_id = create_channel(device_id, key)
 
                 # Build SQL statement to store data
                 sql = "INSERT INTO historical_data (date_time, channel_id, " + \
@@ -87,17 +87,17 @@ def insert_data(historicalData):
                 _LOGGER.debug(sql)
 
                 # Build values
-                values = [historicalData.time.isoformat(' '), channelId, value, "W"]
+                values = [historical_data.time.isoformat(' '), channel_id, value, "W"]
                 _LOGGER.debug(values)
 
                 DATABASE.execute_non_update(sql, values)
 
             # Insert temperature
             # Get channel ID
-            channelId = get_channel_id(None, "temp")
+            channel_id = get_channel_id(None, "temp")
 
-            if channelId is None:
-                channelId = create_channel(deviceId, "temp")
+            if channel_id is None:
+                channel_id = create_channel(device_id, "temp")
 
             # Build SQL statement to store data
             sql = "INSERT INTO historical_data (date_time, channel_id, " + \
@@ -105,7 +105,7 @@ def insert_data(historicalData):
             _LOGGER.debug(sql)
 
             # Build values
-            values = [historicalData.time.isoformat(' '), channelId, historicalData.temperature, "C"]
+            values = [historical_data.time.isoformat(' '), channel_id, historical_data.temperature, "C"]
             _LOGGER.debug(values)
 
             DATABASE.execute_non_update(sql, values)
@@ -117,47 +117,47 @@ def insert_data(historicalData):
         _LOGGER.info("No data to store")
 
 
-def create_device(historicalData):
+def create_device(historical_data):
     """Creates a new device record"""
 
     global _LOGGER
     global DATABASE
 
-    _LOGGER.info("Device name: " + historicalData.name + ", app ID: " + \
-                 str(historicalData.applianceId) + ", sensor type: " + \
-                 str(historicalData.sensorType) + ", does not exists")
+    _LOGGER.info("Device name: " + historical_data.name + ", app ID: " + \
+                 str(historical_data.applianceId) + ", sensor type: " + \
+                 str(historical_data.sensorType) + ", does not exists")
 
     # Insert new device
     sql = "INSERT INTO device (name, appliance_id, sensor_type)" + \
           "VALUES (%s, %s, %s)"
     _LOGGER.debug(sql)
 
-    values = [historicalData.name, historicalData.applianceId, historicalData.sensorType]
+    values = [historical_data.name, historical_data.applianceId, historical_data.sensorType]
     _LOGGER.debug(values)
 
     return DATABASE.execute_non_update(sql, values)
 
 
-def create_channel(deviceId, channel):
+def create_channel(device_id, channel):
     """Creates new channel record"""
 
     global _LOGGER
     global DATABASE
 
-    _LOGGER.info("Device : " + str(deviceId) + ", channel: " + \
+    _LOGGER.info("Device : " + str(device_id) + ", channel: " + \
                  str(channel) + ", does not exists")
 
     # Insert new device
     sql = "INSERT INTO channel (device_id, channel) VALUES (%s, %s)"
     _LOGGER.debug(sql)
 
-    values = [deviceId, channel]
+    values = [device_id, channel]
     _LOGGER.debug(values)
 
     return DATABASE.execute_non_update(sql, values)
 
 
-def get_device_id(name, applianceId, sensorType):
+def get_device_id(name, appliance_id, sensor_type):
     """Retrieves the Device ID form the database"""
 
     global _LOGGER
@@ -167,22 +167,22 @@ def get_device_id(name, applianceId, sensorType):
           "AND appliance_id = %s AND sensor_type = %s ORDER BY device_id"
     _LOGGER.debug(sql)
 
-    values = [name, applianceId, sensorType]
+    values = [name, appliance_id, sensor_type]
     _LOGGER.debug(values)
 
     return DATABASE.execute_one_update(sql, values)
 
 
-def get_channel_id(deviceId, channel):
+def get_channel_id(device_id, channel):
     """Retrieves the channel ID from the database"""
 
     global _LOGGER
     global DATABASE
 
     sql = "SELECT c.channel_id FROM channel c WHERE"
-    if deviceId is not None:
+    if device_id is not None:
         sql += " c.device_id = %s AND "
-        values = [deviceId, channel]
+        values = [device_id, channel]
     else:
         values = [channel]
 
@@ -190,15 +190,15 @@ def get_channel_id(deviceId, channel):
     _LOGGER.debug(sql)
     _LOGGER.debug(values)
 
-    channelId = DATABASE.execute_one_update(sql, values)
+    channel_id = DATABASE.execute_one_update(sql, values)
 
-    if channelId is not None:
-        return channelId[0]
+    if channel_id is not None:
+        return channel_id[0]
     else:
         return None
 
 
-def get_last_historical_data(historicalData):
+def get_last_historical_data(historical_data):
     """Retrieve the last data saved for particular device, application id, sensor type.
     All conditions must match in order to get last data point back.
     Expects a HistoricalData object with those values populated and will return
@@ -208,15 +208,15 @@ def get_last_historical_data(historicalData):
     global DATABASE
 
     # Instantiate return variable
-    lastHistoricalData = HistoricalData()
+    last_historical_data = HistoricalData()
 
     # Set common variables from data received
-    lastHistoricalData.name = historicalData.name
-    lastHistoricalData.applianceId = historicalData.applianceId
-    lastHistoricalData.sensorType = historicalData.sensorType
+    last_historical_data.name = historical_data.name
+    last_historical_data.applianceId = historical_data.applianceId
+    last_historical_data.sensorType = historical_data.sensorType
 
     # Retrieve last data point for appliance
-    # for key, value in historicalData.energy.iteritems():
+    # for key, value in historicalData.energy.items():
 
     # Build SQL statement
     sql = "SELECT c.channel_id, c.channel, max(h.date_time), h.data FROM device d INNER JOIN " + \
@@ -229,23 +229,23 @@ def get_last_historical_data(historicalData):
 
     try:
         # Check channel data exists
-        if historicalData.energy is not None and len(historicalData.energy) > 0:
-            channelSql = ""
+        if historical_data.energy is not None and len(historical_data.energy) > 0:
+            channel_sql = ""
             # Insert all the channels in device
-            for key, value in historicalData.energy.iteritems():
-                # Check if a prepender is needed
-                if len(channelSql) > 0:
-                    channelSql += " OR"
+            for key, value in historical_data.energy.items():
+                # Check if a prepend is needed
+                if len(channel_sql) > 0:
+                    channel_sql += " OR"
 
-                channelSql += " c.channel = '" + key + "'"
+                channel_sql += " c.channel = '" + key + "'"
 
-            sql += " AND (" + channelSql + ")"
+            sql += " AND (" + channel_sql + ")"
 
         sql += " GROUP BY c.channel_id, c.channel, h.data ORDER BY h.date_time, c.channel, c.channel_id, h.data"
         _LOGGER.debug(sql)
 
         # Build values
-        values = [historicalData.time, historicalData.name, historicalData.applianceId, historicalData.sensorType]
+        values = [historical_data.time, historical_data.name, historical_data.applianceId, historical_data.sensorType]
         _LOGGER.debug(values)
 
         # Execute query and store results
@@ -254,31 +254,32 @@ def get_last_historical_data(historicalData):
         # Set the time to the first record (the ealiest date in results)
         # Only if there is a previous record
         if results is not None and len(results) > 0:
-            lastHistoricalData.time = results[0][2]
+            last_historical_data.time = results[0][2]
 
             # If previous record was found. Retrieve energy data
             for result in results:
-                lastHistoricalData.energy[result[1]] = result[3]
+                last_historical_data.energy[result[1]] = result[3]
         else:
             # Unable to find last datapoint. Exit function
             return None
 
         # Get temperature (if any)
-        if lastHistoricalData is not None:
+        if last_historical_data is not None:
             sql = "SELECT h.data FROM channel c INNER JOIN " + \
                   "historical_data h ON h.channel_id = c.channel_id WHERE c.channel = 'temp' AND h.date_time = " + \
-                  "(SELECT h2.date_time FROM historical_data h2 WHERE h2.channel_id = c.channel_id ORDER BY h2.date_time desc LIMIT 1) LIMIT 1"
+                  "(SELECT h2.date_time FROM historical_data h2 WHERE h2.channel_id = c.channel_id ORDER BY " \
+                  "h2.date_time desc LIMIT 1) LIMIT 1 "
             _LOGGER.debug(sql)
 
             results = DATABASE.execute_one_update(sql, None)
 
             if results is not None:
-                lastHistoricalData.temperature = float(results[0])
+                last_historical_data.temperature = float(results[0])
             else:
-                lastHistoricalData.temperature = None
+                last_historical_data.temperature = None
 
     except ConnectionException as ce:
         raise ce
 
     # Return record
-    return lastHistoricalData
+    return last_historical_data

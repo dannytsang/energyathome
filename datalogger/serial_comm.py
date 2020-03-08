@@ -28,7 +28,7 @@ from config.Config import ConfigManager
 _LOGGER = logging.getLogger(__name__)
 
 
-class DeviceManager():
+class DeviceManager:
     INSTANCE = None
 
     # Singleton pattern
@@ -80,9 +80,6 @@ class DeviceManager():
 
         data = self.COMM.readline()
         if len(data) > 0:
-            try:
-                _LOGGER.debug("serial data: " + data)
-            except TypeError as te:
-                _LOGGER.warning(te)
-            
+            _LOGGER.debug("serial data: " + str(data))
+
             return data
