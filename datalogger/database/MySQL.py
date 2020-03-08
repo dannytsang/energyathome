@@ -214,11 +214,6 @@ class MySQL(object):
                     self.disconnect()
                     # Try reconnecting to DB
                     self.connect()
-                except MySQLdb.Error as e:
-                    # Ignore connect error and gracefully exit function
-                    self._LOGGER.error("DB reconnect failed:")
-                    self._LOGGER.error(e, exc_info=True)
-                    raise
                 except ConnectionException as ce:
                     self._LOGGER.error(ce, exc_info=True)
                     raise ce

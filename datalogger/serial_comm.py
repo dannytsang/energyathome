@@ -57,22 +57,22 @@ class DeviceManager():
         self.COMM.bytesize = self.CONFIG.get_int_config("SerialConnection", "bytesize")
 
         if not self.COMM.isOpen():
-            _LOGGER.info('Establishing connection to device')
+            _LOGGER.info("Establishing connection to device")
             self.COMM.open()
         else:
-            _LOGGER.info('Connection already opened')
+            _LOGGER.info("Connection already opened")
 
-        _LOGGER.info('Device connected:' + str(self.COMM.isOpen()))
+        _LOGGER.info("Device connected:" + str(self.COMM.isOpen()))
 
     # Close serial connection
     def close(self):
         """Close connection to USB to Serial port"""
 
         if self.COMM.isOpen:
-            _LOGGER.info('Closing device connection')
+            _LOGGER.info("Closing device connection")
             self.COMM.close()
 
-        _LOGGER.info('Device connection closed')
+        _LOGGER.info("Device connection closed")
 
     # Get data from serial connection
     def read(self):
@@ -80,5 +80,9 @@ class DeviceManager():
 
         data = self.COMM.readline()
         if len(data) > 0:
-            _LOGGER.debug('serial data: ' + data)
+            try:
+                _LOGGER.debug("serial data: " + data)
+            except TypeError as te:
+                _LOGGER.warning(te)
+            
             return data
