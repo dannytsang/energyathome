@@ -21,7 +21,10 @@
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
 
-import configparser
+try:
+    import ConfigParser as configParser
+except:
+    import configparser as configParser
 
 import os
 import logging, logging.config
@@ -36,7 +39,7 @@ class ConfigManager:
 
     def __init__(self):
 
-        self._CONFIG_DIR
+        global _CONFIG_DIR
 
         self.CONFIG_FILENAME = "energyathome.ini"
 
@@ -54,9 +57,9 @@ class ConfigManager:
             _CONFIG_DIR += self.CONFIG_FILENAME
 
             # Initialized config parser
-            self.PARSER = configparser.ConfigParser(defaults=None)
+            self.PARSER = configParser.SafeConfigParser(defaults = None)
             # Config file is required. Get Config.py file directory location
-            self.PARSER.read(open(_CONFIG_DIR))
+            self.PARSER.readfp(open(_CONFIG_DIR))
 
         except IOError as ie:
             self._LOGGER.error("Config File '" + _CONFIG_DIR + "' not found")
@@ -80,10 +83,10 @@ class ConfigManager:
                 self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
 
-        except configparser.NoSectionError as nse:
+        except configParser.NoSectionError as nse:
             self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        except configparser.NoOptionError as nse:
+        except configParser.NoOptionError as nse:
             self._LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
             return None
 
@@ -105,10 +108,10 @@ class ConfigManager:
                 self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
 
-        except configparser.NoSectionError as nse:
+        except configParser.NoSectionError as nse:
             self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        except configparser.NoOptionError as nse:
+        except configParser.NoOptionError as nse:
             self._LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
             return None
         except ValueError as ve:
@@ -129,10 +132,10 @@ class ConfigManager:
                 self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
 
-        except configparser.NoSectionError as nse:
+        except configParser.NoSectionError as nse:
             self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        except configparser.NoOptionError as nse:
+        except configParser.NoOptionError as nse:
             self._LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
             return None
         except ValueError as ve:
@@ -153,10 +156,10 @@ class ConfigManager:
                 self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
 
-        except configparser.NoSectionError as nse:
+        except configParser.NoSectionError as nse:
             self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        except configparser.NoOptionError as nse:
+        except configParser.NoOptionError as nse:
             self._LOGGER.error("No configuration '" + key + "' was found in '" + str(category) + "'category.")
             return None
         except ValueError as ve:
@@ -195,10 +198,10 @@ class ConfigManager:
             else:
                 self._LOGGER.error("Error: PARSER has not been instantiated")
                 return None
-        except configparser.NoSectionError as nse:
+        except configParser.NoSectionError as nse:
             self._LOGGER.error("No configuration category of '" + str(category) + "' was found.")
             return None
-        except configparser.NoOptionError as nse:
+        except configParser.NoOptionError as nse:
             self._LOGGER.error("No configuration '" + category + "' was found in '" + str(category) + "'category.")
             return None
         except ValueError as ve:
