@@ -175,7 +175,7 @@ class CheckLiveData:
             keysToRemove = []
             
             # Loop through all energy data to check if channel is valid
-            for key, value in historicalData.energy.iteritems():
+            for key, value in historicalData.energy.items():
                 try:
                     channels = allowed_channels["app_" + str(historicalData.applianceId)]
                     if channels is None and allowed_channels["allowundefined"] == "False":

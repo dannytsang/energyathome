@@ -41,7 +41,6 @@ class CheckLiveTriggers:
     def check_triggers(self, data):
         """Check if data received meets any one trigger conditions.
         Returns true if it's met"""
-        print("data_trigger logging level: " + logging.getLevelName(10))
         trigger = False
 
         # Get last recorded data point. Used for trigger information
@@ -55,7 +54,7 @@ class CheckLiveTriggers:
             try:
                 # Get all channel data
                 channel = ""
-                for key, value in previous_data_point.energy.iteritems():
+                for key, value in previous_data_point.energy.items():
                     channel += key + "=" + str(value) + "w "
 
                 _LOGGER.info("Last data point for " + previous_data_point.name + \
@@ -112,7 +111,7 @@ class CheckLiveTriggers:
 
         # Check energy variation. Get absolute value regardless of positive / negative value
         # Must loop through each channel
-        for key, value in data.energy.iteritems():
+        for key, value in data.energy.items():
             if previous_data_point.energy.get(key, None) is not None:
                 # Calculate the difference from last data point and the new one
                 energy_diff = math.fabs(value) - previous_data_point.energy[key]
