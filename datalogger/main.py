@@ -28,12 +28,6 @@ import logging
 import core
 import config.log as log
 
-from logging.config import fileConfig
-
-# Get logging configuration file
-fileConfig("config/energyathome.ini")
-
-
 
 def main():
     """Main function which starts the program"""

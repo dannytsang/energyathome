@@ -1,10 +1,11 @@
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
-import logging, os
+import logging
+import os
 
 
 def setup_logging(
-    default_path='energyathome.ini',
+    default_path=os.path.dirname(__file__) + os.sep + "energyathome.ini",
     default_level=logging.DEBUG,
     env_key='LOG_CFG'
 ):
