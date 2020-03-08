@@ -26,7 +26,7 @@ from datetime import datetime, timedelta, date
 
 import historical_data
 from config.Config import ConfigManager
-from database.DatabaseException import ConnectionException
+from database.database_exception import ConnectionException
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -26,7 +26,7 @@ import logging, logging.config
 import pymysql
 
 from config.Config import ConfigManager
-from .DatabaseException import ConnectionException
+from .database_exception import ConnectionException
 
 
 class MySQL(object):

@@ -20,6 +20,6 @@
 
 __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
+
 class ConnectionException(Exception):
     pass
-    

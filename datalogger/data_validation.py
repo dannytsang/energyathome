@@ -22,7 +22,7 @@ __author__ = 'Danny Tsang <danny@dannytsang.co.uk>'
 
 import logging
 from config.Config import ConfigManager
-from database.DatabaseException import ConnectionException
+from database.database_exception import ConnectionException
 
 _LOGGER = logging.getLogger(__name__)
 

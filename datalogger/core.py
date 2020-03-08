@@ -26,7 +26,7 @@ from datetime import datetime, date
 
 import historical_data
 from database.MySQL import MySQL
-from database.DatabaseException import ConnectionException
+from database.database_exception import ConnectionException
 from config.Config import ConfigManager
 from xmlhandler.XMLParser import Parser
 from data_validation import CheckLiveData
