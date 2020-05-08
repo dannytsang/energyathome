@@ -134,6 +134,10 @@ and backing up easier.
     
     `$ mysql -u root -p < energyathome/install/install.sql`
 
+If you're using MySQL 8 or higher, run the below script to optimise the database. The script below can be run after installation as well.
+
+    `$ mysql -u root -p < energyathome/install/mysql8_opt.sql`
+
 # Install datalogger
 
   1. Copy the datalogger directory to a suitable location. For purpose of the following instructions it will use ~/datalogger 
