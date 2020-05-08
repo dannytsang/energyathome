@@ -134,9 +134,9 @@ and backing up easier.
     
     `$ mysql -u root -p < energyathome/install/install.sql`
 
-If you're using MySQL 8 or higher, run the below script to optimise the database. The script below can be run after installation as well.
+There's a handy view created which is not required however useful for querying the data.
 
-    `$ mysql -u root -p < energyathome/install/mysql8_opt.sql`
+    `$ mysql -u root -p < energyathome/install/mysql_opt.sql`
 
 # Install datalogger
 
