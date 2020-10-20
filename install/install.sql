@@ -38,7 +38,7 @@ CREATE TABLE  `energyathome`.`device` (
 
 DROP TABLE IF EXISTS `energyathome`.`historical_data`;
 CREATE TABLE  `energyathome`.`historical_data` (
-  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY
+  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `date_time` datetime NOT NULL,
   `channel_id` int(11) NOT NULL,
   `data` float DEFAULT NULL,
