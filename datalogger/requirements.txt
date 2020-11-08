@@ -1,3 +1,4 @@
 configparser>=3.5.0
 PyMySQL>=0.9.3
 pyserial>=3.4
+pyserial>=2.5.2

@@ -29,20 +29,16 @@ device and therefore will not display any data unless it is being logged by
 another application.
 
 # Pre-Requisites
-
 The following programs / libraries are currently supported and should be
 considered as minimum requirement:
 
 ## datalogger
-
-See datalogger/requirements.txt file for list of dependencies.
+Requires python 3.
 
 ## Database
-
 MySQL 5.7
 
 ## web
-
 Apache (tested with 2.4) PHP 7.0
 
 To install these pre-requisites: Update your repository:
@@ -53,21 +49,25 @@ To install these pre-requisites: Update your repository:
 Type in the following commands to install the relevant component requisites:
 
 ## datalogger
+See datalogger/requirements.txt file for list of dependencies.
 
-    
-    `sudo apt install python python-serial python-mysqldb`
+Install via pypi:
+
+    `sudo apt install python3-pip`
+
+Install all required packages using requirements file:
+     `pip3 install -r energyathome/datalogger/requirements.txt`
+     
+Alternatively a manual install:
+    `sudo apt install python3 python3-serial python3-mysqldb`
 
 ## Database
 
 Try:
-
-    
     `sudo apt install mysql-server`
 
 This usually installs the latest version of MySQL according to the
 distribution. If that fails try installing a specific version:
-
-    
     `sudo apt install mysql-server`
 
 
@@ -77,7 +77,6 @@ the database. Also this account and password may be required to setup
 Energy@Home.
 
 ## web
-
     `sudo apt install apache2 php php-mysql libapache2-mod-php`
 
 # Recommended Tools
@@ -89,7 +88,6 @@ demon yet. To keep it running in the background even when the user has logged
 off this program allows you to do that. Alternatively run it in the terminal
 but do not close the terminal itself (that includes logging off or shutting
 down the computer).
-
     
     `sudo apt install screen`
 
@@ -97,7 +95,6 @@ down the computer).
 
 A set of tools to maintain the MySQL database. It can make creating, editing
 and backing up easier.
-
     
     `sudo apt install mysql-admin`
 
@@ -114,14 +111,6 @@ and backing up easier.
   4. Rename the directory from energyathome_x.x to energyathome 
     
     `mv energyathome_x.x energyathome`
-
-  5. To download the latest version in the repository install mercurial source control software: 
-    
-    `sudo apt install git`
-
-  6. Then checkout the latest code: 
-    
-    `git clone https://geek94@energyathome.googlecode.com/hg/energyathome`
 
 # Install MySQL
 
@@ -153,6 +142,11 @@ To see if the currentcost device is connected you can use the following command 
     `sudo lsusb`
 
 The device is called "Prolific Technology, Inc. PL2303 Serial Port" because it's using a Prolific USB to serial chip.
+
+Use the listUsb.sh file to fine the /dev which matches the device:
+    `sh energyathome/install/listUsb.sh`
+    
+The above script will list each device line by line. Each line will start with the /dev device which needs to be used in the energyathome.ini file (configuration file) separated by the name of the device.
 
 If you're using a desktop OS the use gtkterm.
 

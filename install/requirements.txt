@@ -1,2 +1,0 @@
-mysql-python>=1.2.2
-pyserial>=2.5.2
