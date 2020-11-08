@@ -42,9 +42,9 @@ MySQL 5.7
 Apache (tested with 2.4) PHP 7.0
 
 To install these pre-requisites: Update your repository:
-
-    
-    `sudo apt-get update`
+```shell
+sudo apt-get update
+```
 
 Type in the following commands to install the relevant component requisites:
 
@@ -52,24 +52,31 @@ Type in the following commands to install the relevant component requisites:
 See datalogger/requirements.txt file for list of dependencies.
 
 Install via pypi:
-
-    `sudo apt install python3-pip`
-
+```shell
+sudo apt install python3-pip
+```
 Install all required packages using requirements file:
-     `pip3 install -r energyathome/datalogger/requirements.txt`
+```shell
+pip3 install -r energyathome/datalogger/requirements.txt
+```
      
 Alternatively a manual install:
-    `sudo apt install python3 python3-serial python3-mysqldb`
+```shell
+sudo apt install python3 python3-serial python3-mysqldb
+```
 
 ## Database
 
 Try:
-    `sudo apt install mysql-server`
+```shell
+sudo apt install mysql-server
+```
 
 This usually installs the latest version of MySQL according to the
 distribution. If that fails try installing a specific version:
-    `sudo apt install mysql-server`
-
+```shell
+sudo apt install mysql-server
+```
 
 It will ask for the root password and confirmation of the root password.
 Ensure this is strong password because it will have access to everything on
@@ -77,7 +84,9 @@ the database. Also this account and password may be required to setup
 Energy@Home.
 
 ## web
-    `sudo apt install apache2 php php-mysql libapache2-mod-php`
+```shell
+sudo apt install apache2 php php-mysql libapache2-mod-php
+```
 
 # Recommended Tools
 
@@ -88,15 +97,17 @@ demon yet. To keep it running in the background even when the user has logged
 off this program allows you to do that. Alternatively run it in the terminal
 but do not close the terminal itself (that includes logging off or shutting
 down the computer).
-    
-    `sudo apt install screen`
+```shell
+sudo apt install screen
+```
 
 ## MySQL Admin
 
 A set of tools to maintain the MySQL database. It can make creating, editing
 and backing up easier.
-    
-    `sudo apt install mysql-admin`
+```shell
+sudo apt install mysql-admin
+```
 
 # Download Energy@Home
 
@@ -105,12 +116,13 @@ and backing up easier.
   1. Go to [https://github.com/dannytsang/energyathome/releases](https://github.com/dannytsang/energyathome/releases)
   2. Find and download the latest version. E.g energyathome_x.x.tar.gz 
   3. Extract the files: 
-    
-    `ar -xvwzf energyathome_x.x.tar.gz`
-
+```shell
+ar -xvwzf energyathome_x.x.tar.gz
+```
   4. Rename the directory from energyathome_x.x to energyathome 
-    
-    `mv energyathome_x.x energyathome`
+```shell
+mv energyathome_x.x energyathome
+```
 
 # Install MySQL
 
@@ -120,38 +132,43 @@ and backing up easier.
   4. Run the database install script ~/install/install.sql to create the schema and tables in the install directory. The script is called install.sql. 
   5. Grant the energyathome user access to the database. The bare minimum access it needs are SELECT, INSERT. 
   6. Run the install.sql file located in energyathome/install/install.sql. This can be achieve by running the command below where root is the username. A password will be prompted before the script is run: 
-    
-    `mysql -u root -p < energyathome/install/install.sql`
+```shell
+mysql -u root -p < energyathome/install/install.sql
+```
 
 There's a handy view created which is not required however useful for querying the data.
-
-    `mysql -u root -p < energyathome/install/mysql_opt.sql`
+```shell
+mysql -u root -p < energyathome/install/mysql_opt.sql
+```
 
 # Install datalogger
 
   1. Copy the datalogger directory to a suitable location. For purpose of the following instructions it will use ~/datalogger 
   2. Change directory to the datalogger: 
-    
-    `cd ~/energyathome/datalogger`
-
+```shell
+cd ~/energyathome/datalogger
+```
   3. Edit energyathome.ini to match your database setup. There are comments in the file to enter specfic values between the quotes (") e.g username, password, etc. There are also other options but the defaults should work "out of the box". 
 
 ## Hints
 To see if the currentcost device is connected you can use the following command to see if it's connected:
-
-    `sudo lsusb`
+```shell
+sudo lsusb
+```
 
 The device is called "Prolific Technology, Inc. PL2303 Serial Port" because it's using a Prolific USB to serial chip.
 
 Use the listUsb.sh file to fine the /dev which matches the device:
-    `sh energyathome/install/listUsb.sh`
+```shell
+sh energyathome/install/listUsb.sh
+```
     
 The above script will list each device line by line. Each line will start with the /dev device which needs to be used in the energyathome.ini file (configuration file) separated by the name of the device.
 
 If you're using a desktop OS the use gtkterm.
-
-    
-    `sudo apt install gtkterm`
+```shell
+sudo apt install gtkterm
+```
 
 Start gtkterm either from Applications menu > Accessories > Serial port
 terminal or via the terminal. Set the port settings in Configuration > Port
@@ -165,12 +182,13 @@ a different port. Make sure the gtkterm is closed before starting datalogger.
 If you are using GNU screen do the following:
 
   1. Start screen: 
-    
-    `screen`
-
+```shell
+screen
+```
   2. Start the logger: 
-    
-    `python ~/energyathome/datalogger/main.py`
+```shell 
+python ~/energyathome/datalogger/main.py
+```
 
   3. "Detach" the screen is like minimizing the terminal. Pressing the following keyboard combination: 
     
@@ -180,8 +198,9 @@ If you are using GNU screen do the following:
 
   4. This should return to the prompt before you typed "screen" in step 1. 
   5. To "re-attach" the terminal i.e you want to view or stop the data logger use the following command: 
-    
-    `screen -r`
+```shell
+screen -r
+```
 
 For more information on screen see the man pages ($ man screen) or help
 (screen -h) or the website
@@ -190,8 +209,9 @@ For more information on screen see the man pages ($ man screen) or help
 Without GNU screen:
 
   1. The screen should be at command prompt. If not already, go to the datalogger directory: 
-    
-    `python ~/energyathome/datalogger/main.py`
+```shell
+python ~/energyathome/datalogger/main.py
+```
 
 Please be aware whilst the data logger is started you will not be able to free
 up the terminal till you stop the data logger by pressing ctrl + c. It is best
@@ -214,32 +234,33 @@ restart to take affect.
   1. Install Apache and PHP as shown in Pre-Requisites section. 
   2. By default the web directory is in /var/www. If you type in [http://localhost](http://localhost) in a web browser on the same computer where Apache is installed it would bring up a web page saying "It works!". This means it should be all set up and ready to go. You will require super user privileges to copy to this directory. There are two places you can put the web component: 
   3. To place it as the main page on the is the site e.g [http://www.mysite.com](http://www.mysite.com) copy the ~/web directory to /var/www directory: 
-    
-    `sudo cp -R ~/energyathome/web/* /var/www`
-
+```shell
+sudo cp -R ~/energyathome/web/* /var/www
+```
   4. To copy it to a sub directory e.g [http://www.mysite.com/energyathome](http://www.mysite.com/energyathome) do the following: 
-    
-    `sudo mkdir /var/www/energyathome`
-    `sudo cp -R ~/energyathome/web/* /var/www/energyathome`
+```shell
+sudo mkdir /var/www/energyathome`
+sudo cp -R ~/energyathome/web/* /var/www/energyathome
+```
 
   5. Edit the web configuration file at ~/var/www/energyathome/config/energyathome.ini to match your settings. 
   6. It is best to password protect this information. A simple method is to create a .htpassword and .htaccess files. The ~/web directory already contains a .htaccess file. All that is required is to change the "AuthUserFile" line. By default it assumes you used 3b as the web install. If path is different then amend the path according to your install. The authentication accepts any user specified in the .htpasswd stated in the "AuthUserFile" line. 
   7. Generate a .htpasswd file. This contains a username and their password. The password is encrypted in the file. Execute the following line, changing the path /var/www/energyathome to match your install and user to the username you want: 
-    
-    `sudo htpasswd -c /var/www/energyathome/.htpasswd user`
+```shell
+sudo htpasswd -c /var/www/energyathome/.htpasswd user
+```
 
   8. To add additional users to type in the same command as in step 5 but without the '-c' argument e.g: 
-    
-    `sudo htpasswd /var/www/energyathome/.htpasswd user2`
+```shell 
+sudo htpasswd /var/www/energyathome/.htpasswd user2
+```
 
 By no means is this a secure way of password protecting the web front end but
 it's a simple method. If after going through the steps above no prompt for
 username and password when visiting the web page appears check your Apache
 config. Make sure "AllowOverride AuthConfig" and "Options FollowSymLinks" is
 in the
-
-    
-    <directory>
+> <directory>
 
 directive. Another way to enhance security is to enable and connect using SSL.
 This is beyond the score of this document.
