@@ -249,6 +249,29 @@ also needs the database log in details. There are other options such as
 database name should these be different from the default but generally it
 should work without any changes.
 
+# Home Assistant
+Energy@Home can work with [Home Assistant's](https://www.home-assistant.io/) [SQL integration](https://www.home-assistant.io/integrations/sql/).
+
+It is recommended a new user is setup with readonly (SELECT) privileges only. Once that is done here's an example configuration to get the latest usage:
+`sensor:
+  - platform: sql
+  db_url: !secret eah_connection
+  queries:
+    - name: Electricity usage
+      query: "SELECT id,date_time,channel_id,data,unit as unit_of_measurement FROM energyathome.compiled_historical_data WHERE device_id = 1 AND unit = 'W' AND date_time >= NOW() - INTERVAL 30 MINUTE ORDER BY date_time DESC LIMIT 1;"
+      column: "data"
+      unit_of_measurement: Wh`
+
+Breaking down the above where relevant:
+**db_url: !secret eah_connection** - refers to the connection string containing details like username,password, server address, port, etc in URI format *eah_connection: mysql://[username:[password@[host]/[database]*. For example:
+`eah_connection: mysql://haeah:password123@mydatabaseserver/energyathome`
+
+**WHERE device_id = 1 AND unit = 'W'** - device ID has to be changed to either the CT clamp ID or individual devices. This will be different for each person and in this case an extra check to make sure the reading from the device are watts (instead of temperature).
+
+**date_time >= NOW() - INTERVAL 30 MINUTE** - only get the value if it was recorded in the last 30 minutes. If the data logger stops recording, it will always return the last read value giving a missing leading reading. Instead the query will not return any value if it does not meet this criteria. Depending on how frequently home assistant is setup to query Energy@Home it may need to be adjusted.
+
+**ORDER BY date_time DESC LIMIT 1** - get a single reading ordered by the newest date.
+
 # Upgrade
 ## 0.7.3
 A new numeric primary key has been introduced which requires modifying any existing installation. When applying this, there maybe data problems around dates in historical_data.date_time field. Take a backup before doing any of the below.
