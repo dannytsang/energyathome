@@ -253,14 +253,17 @@ should work without any changes.
 Energy@Home can work with [Home Assistant's](https://www.home-assistant.io/) [SQL integration](https://www.home-assistant.io/integrations/sql/).
 
 It is recommended a new user is setup with readonly (SELECT) privileges only. Once that is done here's an example configuration to get the latest usage:
-`sensor:
-  - platform: sql
+
+```yaml
+sensor:
+- platform: sql
   db_url: !secret eah_connection
   queries:
     - name: Electricity usage
       query: "SELECT id,date_time,channel_id,data,unit as unit_of_measurement FROM energyathome.compiled_historical_data WHERE device_id = 1 AND unit = 'W' AND date_time >= NOW() - INTERVAL 30 MINUTE ORDER BY date_time DESC LIMIT 1;"
       column: "data"
-      unit_of_measurement: Wh`
+      unit_of_measurement: Wh
+```
 
 Breaking down the above where relevant:
 **db_url: !secret eah_connection** - refers to the connection string containing details like username,password, server address, port, etc in URI format *eah_connection: mysql://[username:[password@[host]/[database]*. For example:
