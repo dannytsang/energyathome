@@ -48,27 +48,27 @@ Apache (tested with 2.4) PHP 7.0
 To install these pre-requisites: Update your repository:
 
     
-    `$ sudo apt-get update`
+    `sudo apt-get update`
 
 Type in the following commands to install the relevant component requisites:
 
 ## datalogger
 
     
-    `$ sudo apt-get install python python-serial python-mysqldb`
+    `sudo apt install python python-serial python-mysqldb`
 
 ## Database
 
 Try:
 
     
-    `$ sudo apt-get install mysql-server`
+    `sudo apt install mysql-server`
 
 This usually installs the latest version of MySQL according to the
 distribution. If that fails try installing a specific version:
 
     
-    `$ sudo apt-get install mysql-server`
+    `sudo apt install mysql-server`
 
 
 It will ask for the root password and confirmation of the root password.
@@ -78,7 +78,7 @@ Energy@Home.
 
 ## web
 
-    `$ sudo apt-get install apache2 php php-mysql libapache2-mod-php`
+    `sudo apt install apache2 php php-mysql libapache2-mod-php`
 
 # Recommended Tools
 
@@ -91,7 +91,7 @@ but do not close the terminal itself (that includes logging off or shutting
 down the computer).
 
     
-    `$ sudo apt-get install screen`
+    `sudo apt install screen`
 
 ## MySQL Admin
 
@@ -99,7 +99,7 @@ A set of tools to maintain the MySQL database. It can make creating, editing
 and backing up easier.
 
     
-    `$ sudo apt-get install mysql-admin`
+    `sudo apt install mysql-admin`
 
 # Download Energy@Home
 
@@ -109,19 +109,19 @@ and backing up easier.
   2. Find and download the latest version. E.g energyathome_x.x.tar.gz 
   3. Extract the files: 
     
-    `$ tar -xvwzf energyathome_x.x.tar.gz`
+    `ar -xvwzf energyathome_x.x.tar.gz`
 
   4. Rename the directory from energyathome_x.x to energyathome 
     
-    `$ mv energyathome_x.x energyathome`
+    `mv energyathome_x.x energyathome`
 
   5. To download the latest version in the repository install mercurial source control software: 
     
-    `$ sudo apt-get install git`
+    `sudo apt install git`
 
   6. Then checkout the latest code: 
     
-    `$ git clone https://geek94@energyathome.googlecode.com/hg/energyathome`
+    `git clone https://geek94@energyathome.googlecode.com/hg/energyathome`
 
 # Install MySQL
 
@@ -132,28 +132,32 @@ and backing up easier.
   5. Grant the energyathome user access to the database. The bare minimum access it needs are SELECT, INSERT. 
   6. Run the install.sql file located in energyathome/install/install.sql. This can be achieve by running the command below where root is the username. A password will be prompted before the script is run: 
     
-    `$ mysql -u root -p < energyathome/install/install.sql`
+    `mysql -u root -p < energyathome/install/install.sql`
 
 There's a handy view created which is not required however useful for querying the data.
 
-    `$ mysql -u root -p < energyathome/install/mysql_opt.sql`
+    `mysql -u root -p < energyathome/install/mysql_opt.sql`
 
 # Install datalogger
 
   1. Copy the datalogger directory to a suitable location. For purpose of the following instructions it will use ~/datalogger 
   2. Change directory to the datalogger: 
     
-    `$ cd ~/energyathome/datalogger`
+    `cd ~/energyathome/datalogger`
 
   3. Edit energyathome.ini to match your database setup. There are comments in the file to enter specfic values between the quotes (") e.g username, password, etc. There are also other options but the defaults should work "out of the box". 
 
 ## Hints
+To see if the currentcost device is connected you can use the following command to see if it's connected:
 
-I'm sure there is a command line way to find out which port the CurrentCost
-device is connected to but I used installed and used gtkterm.
+    `sudo lsusb`
+
+The device is called "Prolific Technology, Inc. PL2303 Serial Port" because it's using a Prolific USB to serial chip.
+
+If you're using a desktop OS the use gtkterm.
 
     
-    `$ sudo apt-get install gtkterm`
+    `sudo apt install gtkterm`
 
 Start gtkterm either from Applications menu > Accessories > Serial port
 terminal or via the terminal. Set the port settings in Configuration > Port
