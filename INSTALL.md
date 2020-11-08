@@ -172,26 +172,22 @@ If you are using GNU screen do the following:
 
   1. Start screen: 
     
-    `$ screen`
+    `screen`
 
-  2. The screen should be at command prompt. If not already, go to the datalogger directory: 
+  2. Start the logger: 
     
-    `$ cd ~/energyathome/datalogger`
+    `python ~/energyathome/datalogger/main.py`
 
-  3. Start the logger: 
-    
-    `$ python Main`
-
-  4. "Detach" the screen is like minimizing the terminal. Pressing the following keyboard combination: 
+  3. "Detach" the screen is like minimizing the terminal. Pressing the following keyboard combination: 
     
     [ctrl] + a
     (let go of above keys)
     d
 
-  5. This should return to the prompt before you typed "screen" in step 1. 
-  6. To "re-attach" the terminal i.e you want to view or stop the data logger use the following command: 
+  4. This should return to the prompt before you typed "screen" in step 1. 
+  5. To "re-attach" the terminal i.e you want to view or stop the data logger use the following command: 
     
-    `$ screen -r`
+    `screen -r`
 
 For more information on screen see the man pages ($ man screen) or help
 (screen -h) or the website
@@ -201,11 +197,7 @@ Without GNU screen:
 
   1. The screen should be at command prompt. If not already, go to the datalogger directory: 
     
-    `$ cd ~/energyathome/datalogger`
-
-  2. Start the logger: 
-    
-    `$ python Main`
+    `python ~/energyathome/datalogger/main.py`
 
 Please be aware whilst the data logger is started you will not be able to free
 up the terminal till you stop the data logger by pressing ctrl + c. It is best
@@ -229,22 +221,22 @@ restart to take affect.
   2. By default the web directory is in /var/www. If you type in [http://localhost](http://localhost) in a web browser on the same computer where Apache is installed it would bring up a web page saying "It works!". This means it should be all set up and ready to go. You will require super user privileges to copy to this directory. There are two places you can put the web component: 
   3. To place it as the main page on the is the site e.g [http://www.mysite.com](http://www.mysite.com) copy the ~/web directory to /var/www directory: 
     
-    `$ sudo cp -R ~/energyathome/web/* /var/www`
+    `sudo cp -R ~/energyathome/web/* /var/www`
 
   4. To copy it to a sub directory e.g [http://www.mysite.com/energyathome](http://www.mysite.com/energyathome) do the following: 
     
-    `$ sudo mkdir /var/www/energyathome`
-    `$ sudo cp -R ~/energyathome/web/* /var/www/energyathome`
+    `sudo mkdir /var/www/energyathome`
+    `sudo cp -R ~/energyathome/web/* /var/www/energyathome`
 
   5. Edit the web configuration file at ~/var/www/energyathome/config/energyathome.ini to match your settings. 
   6. It is best to password protect this information. A simple method is to create a .htpassword and .htaccess files. The ~/web directory already contains a .htaccess file. All that is required is to change the "AuthUserFile" line. By default it assumes you used 3b as the web install. If path is different then amend the path according to your install. The authentication accepts any user specified in the .htpasswd stated in the "AuthUserFile" line. 
   7. Generate a .htpasswd file. This contains a username and their password. The password is encrypted in the file. Execute the following line, changing the path /var/www/energyathome to match your install and user to the username you want: 
     
-    `$ sudo htpasswd -c /var/www/energyathome/.htpasswd user`
+    `sudo htpasswd -c /var/www/energyathome/.htpasswd user`
 
   8. To add additional users to type in the same command as in step 5 but without the '-c' argument e.g: 
     
-    `$ sudo htpasswd /var/www/energyathome/.htpasswd user2`
+    `sudo htpasswd /var/www/energyathome/.htpasswd user2`
 
 By no means is this a secure way of password protecting the web front end but
 it's a simple method. If after going through the steps above no prompt for
