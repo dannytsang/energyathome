@@ -308,6 +308,6 @@ Once complete, run [this](https://gist.github.com/dannytsang/5663dd940df6ce59436
 ## 0.7.8
 Ensure you have a backup of your data before doing this.
 
-A change to the database engine from MyISAM to InnoDB to help optimize large datasets. The script to take previous installs to the new engine is in upgrade_0.7.8.sql.
+A change to the database engine from MyISAM to InnoDB to help optimize large datasets. The script to take previous installs to the new engine is in [upgrade_0.7.8.sql](https://github.com/dannytsang/energyathome/blob/master/install/upgrade_0.7.8.sql).
 
-If this should fail like it did for me on the historical_data table due to the size, it might be worth running the alternative script where it will remove, re-create and insert the data. Both scripts may potentially take a long time so be prepared to wait for the script to run.
+If this should fail like it did for me on the historical_data table due to the size, it might be worth running the [alternative script](https://github.com/dannytsang/energyathome/blob/master/install/upgrade_0.7.8_alternative.sql) where it will remove, re-create and insert the data. Both scripts may potentially take a long time so be prepared to wait for the script to run.
