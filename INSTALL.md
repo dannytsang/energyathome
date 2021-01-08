@@ -272,6 +272,7 @@ should work without any changes.
 
 # Home Assistant
 Energy@Home can work with [Home Assistant's](https://www.home-assistant.io/) [SQL integration](https://www.home-assistant.io/integrations/sql/).
+[<img src="https://i0.wp.com/dannytsang.co.uk/wp-content/uploads/2009/12/Energyathome-150x150.jpg">](https://i0.wp.com/dannytsang.co.uk/wp-content/uploads/2009/12/Energyathome.jpg "Standard energy@home")
 
 It is recommended a new user is setup with readonly (SELECT) privileges only. Once that is done here's an example configuration to get the latest usage:
 
@@ -303,3 +304,10 @@ A new numeric primary key has been introduced which requires modifying any exist
 To find and remove this follow the instructions in [here](https://gist.github.com/dannytsang/1de83d0ecc490cb31aa01c44669e0582).
 
 Once complete, run [this](https://gist.github.com/dannytsang/5663dd940df6ce59436523f610387c4e) to add the new primary key.
+
+## 0.7.8
+Ensure you have a backup of your data before doing this.
+
+A change to the database engine from MyISAM to InnoDB to help optimize large datasets. The script to take previous installs to the new engine is in upgrade_0.7.8.sql.
+
+If this should fail like it did for me on the historical_data table due to the size, it might be worth running the alternative script where it will remove, re-create and insert the data. Both scripts may potentially take a long time so be prepared to wait for the script to run.

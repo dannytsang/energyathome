@@ -2,7 +2,7 @@ language: python
 python:
   - "3.8"
 # command to install dependencies
-install: "pip install -r datalogger/requirements.txt"
+install: "pip3 install -r datalogger/requirements.txt"
 # Specify MySql depencdency
 services:
   - mysql

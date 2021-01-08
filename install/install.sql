@@ -16,7 +16,7 @@ CREATE TABLE  `energyathome`.`channel` (
   `channel` varchar(10) NOT NULL,
   PRIMARY KEY (`channel_id`),
   KEY `device_id_idx` (`device_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
 
 --
 -- Definition of table `energyathome`.`devices`
@@ -30,7 +30,7 @@ CREATE TABLE  `energyathome`.`device` (
   `sensor_type` int(11) default '0',
   `display_name` VARCHAR(100),
   PRIMARY KEY  USING BTREE (`device_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 
 --
 -- Definition of table `energyathome`.`historical_data`
@@ -40,11 +40,11 @@ DROP TABLE IF EXISTS `energyathome`.`historical_data`;
 CREATE TABLE  `energyathome`.`historical_data` (
   `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `date_time` datetime NOT NULL,
-  `channel_id` int(11) NOT NULL,
+  `channel_id` int NOT NULL,
   `data` float DEFAULT NULL,
   `unit` varchar(10) DEFAULT NULL,
   KEY `devices_datetime_idx` (`date_time`) USING BTREE,
   KEY `channel_id_idx` (`channel_id`),
   KEY `historical_data_idx` (`channel_id`,`date_time`, `data`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
