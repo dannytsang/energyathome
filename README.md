@@ -22,7 +22,7 @@ See COPYING for more details about the licensing of this program.
   * Requires Python.
 
 Example data displayed in [Home Assistant](https://www.home-assistant.io/)
-[<img src="https://twitter.com/i/status/1425402088708837388">](https://i0.wp.com/https://twitter.com/i/status/1425402088708837388 "Energy usage in home assistant")
+[<img src="https://twitter.com/i/status/1425402088708837388">](https://twitter.com/i/status/1425402088708837388 "Energy usage in home assistant")
 
 # INSTALL
 
