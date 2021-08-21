@@ -17,38 +17,22 @@ cable and stores it in the database.
 Directory storing all setup and install related files. This should only be
 needed once and can be removed after.
 
-## web
-
-The web component allows users to view data stored in the database from a web
-site/page.
-
-Each component is independant of eachother and can be installed without any
-requisite of one being installed before the other. Although this is the case,
-if datalogger is not installed, the data will not be captured from the CC128
-device and therefore will not display any data unless it is being logged by
-another application.
-
 # Pre-Requisites
 The following programs / libraries are currently supported and should be
 considered as minimum requirement:
 
 ## datalogger
-Requires python 3.
+Requires python 3.x.
 
 ## Database
 MySQL 5.7
 
-## web
-Apache (tested with 2.4) PHP 7.0
-
+## datalogger
 To install these pre-requisites: Update your repository:
 ```shell
 sudo apt-get update
 ```
 
-Type in the following commands to install the relevant component requisites:
-
-## datalogger
 See datalogger/requirements.txt file for list of dependencies.
 
 Install via pypi:
@@ -82,11 +66,6 @@ It will ask for the root password and confirmation of the root password.
 Ensure this is strong password because it will have access to everything on
 the database. Also this account and password may be required to setup
 Energy@Home.
-
-## web
-```shell
-sudo apt install apache2 php php-mysql libapache2-mod-php
-```
 
 # Recommended Tools
 
@@ -228,47 +207,6 @@ usermod -a -G dialout $USER` where `$USER is ther current user. If the
 datalogger is not going to be running as the current user, replace `$USER with
 the appropriate username. This may require the user to log out and back in or
 restart to take affect.
-
-# Install web
-
-  1. Install Apache and PHP as shown in Pre-Requisites section. 
-  2. By default the web directory is in /var/www. If you type in [http://localhost](http://localhost) in a web browser on the same computer where Apache is installed it would bring up a web page saying "It works!". This means it should be all set up and ready to go. You will require super user privileges to copy to this directory. There are two places you can put the web component: 
-  3. To place it as the main page on the is the site e.g [http://www.mysite.com](http://www.mysite.com) copy the ~/web directory to /var/www directory: 
-```shell
-sudo cp -R ~/energyathome/web/* /var/www
-```
-  4. To copy it to a sub directory e.g [http://www.mysite.com/energyathome](http://www.mysite.com/energyathome) do the following: 
-```shell
-sudo mkdir /var/www/energyathome`
-sudo cp -R ~/energyathome/web/* /var/www/energyathome
-```
-
-  5. Edit the web configuration file at ~/var/www/energyathome/config/energyathome.ini to match your settings. 
-  6. It is best to password protect this information. A simple method is to create a .htpassword and .htaccess files. The ~/web directory already contains a .htaccess file. All that is required is to change the "AuthUserFile" line. By default it assumes you used 3b as the web install. If path is different then amend the path according to your install. The authentication accepts any user specified in the .htpasswd stated in the "AuthUserFile" line. 
-  7. Generate a .htpasswd file. This contains a username and their password. The password is encrypted in the file. Execute the following line, changing the path /var/www/energyathome to match your install and user to the username you want: 
-```shell
-sudo htpasswd -c /var/www/energyathome/.htpasswd user
-```
-
-  8. To add additional users to type in the same command as in step 5 but without the '-c' argument e.g: 
-```shell 
-sudo htpasswd /var/www/energyathome/.htpasswd user2
-```
-
-By no means is this a secure way of password protecting the web front end but
-it's a simple method. If after going through the steps above no prompt for
-username and password when visiting the web page appears check your Apache
-config. Make sure "AllowOverride AuthConfig" and "Options FollowSymLinks" is
-in the
-> <directory>
-
-directive. Another way to enhance security is to enable and connect using SSL.
-This is beyond the score of this document.
-
-There is a config file inside the web/server directory called config.php. This
-also needs the database log in details. There are other options such as
-database name should these be different from the default but generally it
-should work without any changes.
 
 # Home Assistant
 Energy@Home can work with [Home Assistant's](https://www.home-assistant.io/) [SQL integration](https://www.home-assistant.io/integrations/sql/).
